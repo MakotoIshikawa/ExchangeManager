@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace ExchangeManager {
 			// Initialize values for the start and end times, and the number of appointments to retrieve.
 			var startDate = DateTime.Now;
 			var endDate = startDate.AddDays(30);
-			int numAppts = 5;
+			var numAppts = 5;
 
 			// Initialize the calendar folder object with only the folder ID. 
 			var calendar = CalendarFolder.Bind(service, WellKnownFolderName.Calendar, new PropertySet());
@@ -61,16 +62,15 @@ namespace ExchangeManager {
 			cView.PropertySet = new PropertySet(AppointmentSchema.Subject, AppointmentSchema.Start, AppointmentSchema.End);
 
 			// Retrieve a collection of appointments by using the calendar view.
-			FindItemsResults<Appointment> appointments = calendar.FindAppointments(cView);
+			var appointments = calendar.FindAppointments(cView);
 
-			Console.WriteLine("\nThe first " + numAppts + " appointments on your calendar from " + startDate.Date.ToShortDateString() +
+			Debug.WriteLine("\nThe first " + numAppts + " appointments on your calendar from " + startDate.Date.ToShortDateString() +
 							  " to " + endDate.Date.ToShortDateString() + " are: \n");
 
-			foreach (Appointment a in appointments) {
-				Console.Write("Subject: " + a.Subject.ToString() + " ");
-				Console.Write("Start: " + a.Start.ToString() + " ");
-				Console.Write("End: " + a.End.ToString());
-				Console.WriteLine();
+			foreach (var a in appointments) {
+				Debug.Write("Subject: " + a.Subject.ToString() + " ");
+				Debug.Write("Start: " + a.Start.ToString() + " ");
+				Debug.WriteLine("End: " + a.End.ToString());
 			}
 		}
 	}

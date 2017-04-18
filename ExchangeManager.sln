@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExchangeManager", "ExchangeManager\ExchangeManager.csproj", "{DB751CFB-2B19-47B7-8F0C-F3C90DA641BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestExchangeManager", "UnitTestExchangeManager\UnitTestExchangeManager.csproj", "{82D43A6C-40EF-4339-A397-B4F81A4A3B37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DB751CFB-2B19-47B7-8F0C-F3C90DA641BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB751CFB-2B19-47B7-8F0C-F3C90DA641BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB751CFB-2B19-47B7-8F0C-F3C90DA641BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82D43A6C-40EF-4339-A397-B4F81A4A3B37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82D43A6C-40EF-4339-A397-B4F81A4A3B37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82D43A6C-40EF-4339-A397-B4F81A4A3B37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82D43A6C-40EF-4339-A397-B4F81A4A3B37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
