@@ -36,6 +36,14 @@
     <StartupObject>ExchangeManager.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonFeaturesLibrary, Version=1.2.6297.25603, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CommonFeaturesLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ExtensionsLibrary, Version=1.2.6297.25602, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\ExtensionsLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Exchange.WebServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.dll</HintPath>
       <Private>True</Private>
@@ -54,12 +62,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExchangeOnlineManager.cs" />
+    <Compile Include="Extensions\AttendeeInfoExtension.cs" />
+    <Compile Include="Extensions\ExchangeServiceExtension.cs" />
+    <Compile Include="Interface\IExchangeManager.cs" />
+    <Compile Include="Primitives\ExchangeManagerBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enums\" />
+    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

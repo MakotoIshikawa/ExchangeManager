@@ -4,74 +4,67 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExchangeManager.Extensions;
+using ExchangeManager.Interface;
 using Microsoft.Exchange.WebServices.Data;
 
 namespace ExchangeManager {
-	class Program {
-		static void Main(string[] args) {
-			var username = @"ishikawm@kariverification14.onmicrosoft.com";
-			var password = @"Ishikawam!";
+	public class Program {
+		private static string _username = @"ishikawm@kariverification14.onmicrosoft.com";
+		private static string _password = @"Ishikawam!";
 
-			var service = new ExchangeService(ExchangeVersion.Exchange2013_SP1) {
-				Credentials = new WebCredentials(username, password),
-				UseDefaultCredentials = false,
-				TraceEnabled = true,
-				TraceFlags = TraceFlags.All,
+		public static void Main(string[] args) {
+			var service = new ExchangeOnlineManager(_username, _password);
+
+			GetSuggestedMeetingTimesAndFreeBusyInfo(service);
+		}
+
+		private static void GetSuggestedMeetingTimesAndFreeBusyInfo(IExchangeManager service) {
+			var meetingDuration = 60;
+
+			// 出席者のコレクションを作成します。 
+			var attendees = new List<AttendeeInfo> {
+				{ "mack@contoso.com", MeetingAttendeeType.Organizer },	// 主催者
+				{ "sadie@contoso.com", MeetingAttendeeType.Required },	// 必須
 			};
 
-			service.AutodiscoverUrl(username, url => {
-				// 検証コールバックのデフォルトは、URLを拒否することです。
-				var result = false;
+			var now = DateTime.Now;
+			var startTime = now.AddDays(1);
+			var endTime = now.AddDays(2);
 
-				var redirectionUri = new Uri(url);
+			var goodSuggestionThreshold = 49;
+			var maximumNonWorkHoursSuggestionsPerDay = 0;
+			var maximumSuggestionsPerDay = 2;
 
-				// リダイレクトURLの内容を検証します。
-				// この単純な検証コールバックでは、HTTPSを使用して認証資格情報を暗号化する場合、
-				// リダイレクトURLは有効と見なされます。
-				if (redirectionUri.Scheme == "https") {
-					result = true;
+			var results = service.GetUserAvailability(attendees, startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
+
+			// 提案された会議時間を表示します。
+			Debug.WriteLine($"Availability for {attendees[0].SmtpAddress} and {attendees[1].SmtpAddress}");
+
+			foreach (var suggestion in results.Suggestions) {
+				Debug.WriteLine($"Suggested date: {suggestion.Date.ToShortDateString()}\n");
+				Debug.WriteLine($"Suggested meeting times:\n");
+				foreach (var ts in suggestion.TimeSuggestions) {
+					var tim = ts.MeetingTime;
+					Debug.WriteLine($"\t{tim.ToShortTimeString()} - {tim.AddMinutes(meetingDuration).ToShortTimeString()}\n");
 				}
 
-				return result;
-			});
+				int i = 0;
 
-			var subject = "HelloWorld";
-			var text = "これは、EWS Managed APIを使用して送信した最初のメールです。";
-			var isRichText = false;
+				// 空き時間を表示します。
+				foreach (var availability in results.AttendeesAvailability) {
+					Debug.WriteLine($"Availability information for {attendees[i].SmtpAddress}:\n");
 
-			var email = new EmailMessage(service) {
-				Subject = subject,
-				Body = new MessageBody(isRichText ? BodyType.HTML : BodyType.Text, text),
-			};
-			email.ToRecipients.Add(username);
+					foreach (var calEvent in availability.CalendarEvents) {
+						Debug.WriteLine($"\tBusy from {calEvent.StartTime} to {calEvent.EndTime} \n");
+					}
 
-			email.Send();
-
-			// Initialize values for the start and end times, and the number of appointments to retrieve.
-			var startDate = DateTime.Now;
-			var endDate = startDate.AddDays(30);
-			var numAppts = 5;
-
-			// Initialize the calendar folder object with only the folder ID. 
-			var calendar = CalendarFolder.Bind(service, WellKnownFolderName.Calendar, new PropertySet());
-
-			// Set the start and end time and number of appointments to retrieve.
-			var cView = new CalendarView(startDate, endDate, numAppts);
-
-			// Limit the properties returned to the appointment's subject, start time, and end time.
-			cView.PropertySet = new PropertySet(AppointmentSchema.Subject, AppointmentSchema.Start, AppointmentSchema.End);
-
-			// Retrieve a collection of appointments by using the calendar view.
-			var appointments = calendar.FindAppointments(cView);
-
-			Debug.WriteLine("\nThe first " + numAppts + " appointments on your calendar from " + startDate.Date.ToShortDateString() +
-							  " to " + endDate.Date.ToShortDateString() + " are: \n");
-
-			foreach (var a in appointments) {
-				Debug.Write("Subject: " + a.Subject.ToString() + " ");
-				Debug.Write("Start: " + a.Start.ToString() + " ");
-				Debug.WriteLine("End: " + a.End.ToString());
+					i++;
+				}
 			}
 		}
+	}
+
+	public static partial class Extension {
 	}
 }

@@ -1,0 +1,647 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CommonFeaturesLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:CommonFeaturesLibrary.CsvReader">
+            <summary>
+            CSV形式のストリームを読み込む CsvReader を実装します。
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.CsvReader._reader">
+            <summary>
+            CSVを読み込むストリーム
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.CsvReader._isQuotedField">
+            <summary>
+            現在読み込んでいるフィールドがダブルクォートで囲まれたフィールドかどうか
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.#ctor(System.Text.StringBuilder)">
+            <summary>
+            文字列データを指定して、
+            <see cref="T:CommonFeaturesLibrary.CsvReader">CsvReader</see> クラスの新しいインスタンスを初期化します。
+            </summary>
+            <param name="data">文字列データ。</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.#ctor(System.IO.Stream)">
+            <summary>
+            ストリームを指定して、
+            <see cref="T:CommonFeaturesLibrary.CsvReader">CsvReader</see> クラスの新しいインスタンスを初期化します。
+            </summary>
+            <param name="stream">読み込まれるストリーム。</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.#ctor(System.IO.FileInfo)">
+            <summary>
+            ファイル情報を指定して、
+            <see cref="T:CommonFeaturesLibrary.CsvReader">CsvReader</see> クラスの新しいインスタンスを初期化します。
+            </summary>
+            <param name="file">読み込まれる完全なファイルパス。</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.#ctor(System.String,System.Text.Encoding)">
+            <summary>
+            ファイル名、文字エンコーディングを指定して、
+            <see cref="T:CommonFeaturesLibrary.CsvReader">CsvReader</see> クラスの新しいインスタンスを初期化します。
+            </summary>
+            <param name="path">読み込まれる完全なファイルパス。</param>
+            <param name="encoding">使用する文字エンコーディング。</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.#ctor(System.IO.StreamReader)">
+            <summary>
+            StreamReader を指定して、
+            <see cref="T:CommonFeaturesLibrary.CsvReader">CsvReader</see> クラスの新しいインスタンスを初期化します。
+            </summary>
+            <param name="reader">StreamReader</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.ReadToEnd">
+            <summary>
+            すべての文字の現在位置から末尾までを読み込みます。
+            </summary>
+            <returns>
+            ストリームの現在位置から末尾までのストリームの残り部分。
+            現在の位置がストリームの末尾である場合は、空の配列が返されます。
+            </returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.ReadToEndAsync">
+            <summary>
+            すべての文字の現在位置から末尾までを非同期的に読み込みます。
+            </summary>
+            <returns>
+            ストリームの現在位置から末尾までのストリームの残り部分。
+            現在の位置がストリームの末尾である場合は、空の配列が返されます。
+            </returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.ReadRow">
+            <summary>
+            現在のストリームから 1 レコード分の文字を読み取り、そのデータを文字配列として返します。
+            </summary>
+            <returns>入力ストリームからの次のレコード。入力ストリームの末尾に到達した場合は null。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.ReadRowAsync">
+            <summary>
+            現在のストリームから非同期的に 1 レコード分の文字を読み取り、そのデータを文字配列として返します。
+            </summary>
+            <returns>入力ストリームからの次のレコード。入力ストリームの末尾に到達した場合は null。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.ToDataTable(System.String)">
+            <summary>
+            CSVファイルのデータをデータテーブルに変換します。
+            </summary>
+            <param name="tableName">テーブル名</param>
+            <returns>データテーブルを返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.ToDataTableAsync(System.String)">
+            <summary>
+            CSVファイルのデータをデータテーブルに変換します。
+            </summary>
+            <param name="tableName">テーブル名</param>
+            <returns>データテーブルを返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.Close">
+            <summary>
+            CsvReader オブジェクトと、その基になるストリームを閉じ、
+            リーダーに関連付けられたすべてのシステムリソースを解放します。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReader.Dispose">
+            <summary>
+            この CsvReader オブジェクトによって使用されているすべてのリソースを解放します。
+            </summary>
+        </member>
+        <member name="T:CommonFeaturesLibrary.CsvReaderExtension">
+            <summary>
+            CSV ファイルにアクセスする拡張メソッドを提供するクラスです。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReaderExtension.GetCsvTable(System.IO.FileInfo)">
+            <summary>
+            CSV ファイルのデータを取り込んだデータテーブルを取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>CSV ファイルのデータを取り込んだ DataTable を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReaderExtension.GetCsvTable(System.IO.Stream,System.String)">
+            <summary>
+            CSV ファイルのデータを取り込んだデータテーブルを取得します。
+            </summary>
+            <param name="this">Stream</param>
+            <param name="tableName">テーブル名</param>
+            <returns>CSV ファイルのデータを取り込んだ DataTable を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReaderExtension.GetCsvTableAsync(System.IO.FileInfo)">
+            <summary>
+            CSV ファイルのデータを取り込んだデータテーブルを取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>CSV ファイルのデータを取り込んだ DataTable を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.CsvReaderExtension.GetCsvTableAsync(System.IO.Stream,System.String)">
+            <summary>
+            CSV ファイルのデータを取り込んだデータテーブルを取得します。
+            </summary>
+            <param name="this">Stream</param>
+            <param name="tableName">テーブル名</param>
+            <returns>CSV ファイルのデータを取り込んだ DataTable を返します。</returns>
+        </member>
+        <member name="T:CommonFeaturesLibrary.DuplicateBootCheck">
+            <summary>
+            重複起動チェッククラス
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.DuplicateBootCheck._mutex">
+            <summary>Mutex</summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.DuplicateBootCheck.IsRunning(System.String)">
+            <summary>
+            重複起動しているかどうかを返します。
+            </summary>
+            <param name="mutexName">Mutex 名</param>
+            <remarks>
+            同じ Mutex 名を持つプロセス重複起動の判定をします
+            </remarks>
+            <returns>判定結果を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.DuplicateBootCheck.CheckRunning(System.Action{System.String})">
+            <summary>
+            重複起動しているかどうかを判定します。
+            </summary>
+            <param name="running">重複起動時に呼ばれるメソッド</param>
+            <remarks>
+            <para>ファイルパスを元に重複起動の判定をします。</para>
+            <para>注) パス違いなら「同一」実行ファイルでも重複とは判定しません。</para>
+            </remarks>
+        </member>
+        <member name="M:CommonFeaturesLibrary.DuplicateBootCheck.CheckRunning(System.Int32,System.Action{System.String})">
+            <summary>
+            重複起動しているかどうかを判定します。
+            </summary>
+            <returns>重複起動チェック結果</returns>
+            <param name="appNum">アプリケーション番号</param>
+            <param name="running">重複起動時に呼ばれるメソッド</param>
+            <remarks>
+            <para>アプリ番号を元に重複起動の判定をします。</para>
+            <para>注) アプリ番号違いなら「同一」実行ファイルでも重複とは判定しません。</para>
+            </remarks>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Extensions.FileInfoExtension">
+            <summary>
+            FileInfo を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Extensions.FileInfoExtension.GetVersionName(System.IO.FileInfo,System.UInt32)">
+            <summary>
+            バージョン番号を付与したファイル名を取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="version">バージョン番号</param>
+            <returns>バージョン番号を付与したファイル名を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Extensions.FileInfoExtension.LoadDataTable(System.IO.FileInfo)">
+            <summary>
+            CSV ファイルからデータを読み込みます。
+            </summary>
+            <param name="file"></param>
+            <returns>読み込んだデータテーブルを返します。</returns>
+        </member>
+        <member name="T:CommonFeaturesLibrary.FileVersionManager">
+            <summary>
+            ファイルバージョンを管理するメソッドを提供するクラスです。
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.FileVersionManager.LOG_FILE_CNT">
+            <summary>
+            ファイル世代管理数</summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.FileVersionManager.MB">
+            <summary>
+            容量1[MB]</summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.FileVersionManager.MAX_CAPACITY">
+            <summary>
+            容量2[MB]</summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.FileVersionManager.WriteLog(System.IO.FileInfo,System.String)">
+            <summary>
+            ファイルバージョンを管理して、
+            ログファイルにメッセージを書き込みます。
+            </summary>
+            <param name="this">ファイル情報</param>
+            <param name="message">メッセージ</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.FileVersionManager.WriteLogAsync(System.IO.FileInfo,System.String)">
+            <summary>
+            ファイルバージョンを管理して、
+            ログファイルにメッセージを書き込みます。[非同期]
+            </summary>
+            <param name="this">ファイル情報</param>
+            <param name="message">メッセージ</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.FileVersionManager.CheckCapacity(System.IO.FileInfo,System.Int64,System.UInt32,System.Int64)">
+            <summary>
+            ファイル容量のチェックしてファイルを世代管理します。
+            </summary>
+            <param name="fileInfo">ファイル情報</param>
+            <param name="dtLength">追加するデータのサイズ</param>
+            <param name="genMgtCnt">ファイル世代管理数</param>
+            <param name="maxCapacity">最大容量</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.FileVersionManager.StateSelection(System.String,System.UInt32)">
+            <summary>
+            世代ファイル管理状況
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.FileVersionManager.CreateVersionName(System.String,System.UInt32)">
+            <summary>
+            バージョンファイル情報作成
+            </summary>
+            <param name="filePath">ファイルパス</param>
+            <param name="version">バージョン</param>
+            <returns>バージョン番号を付与したファイル名を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.FileVersionManager.RenameFile(System.String,System.UInt32)">
+            <summary>
+            ファイル改名
+            </summary>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Logger">
+            <summary>
+            ログ出力クラス
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Logger.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+            <remarks>
+            オブジェクトを生成します。</remarks>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Logger.#ctor(System.String)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="filePath">ファイルパス</param>
+            <remarks>
+            オブジェクトを生成します。</remarks>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Logger.FileInfo">
+            <summary>ファイル情報</summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Logger.AppLogFilePath">
+            <summary>アプリログファイルパス</summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Logger.WriteLog(System.String)">
+            <summary>
+            ログ書込
+            </summary>
+            <param name="message">メッセージ</param>
+            <remarks>
+            ログファイルにログを書き込む</remarks>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Logger.Clear">
+            <summary>
+            ログファイルの内容をクリアします。
+            </summary>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.Access.AccessConnection">
+            <summary>
+            Excel ファイル用のデータベースの Connection を提供するクラスです。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Access.AccessConnection.#ctor(System.String)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="fileName">ファイル名</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Access.AccessConnection.#ctor(System.IO.FileInfo)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="file">ファイル</param>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Access.AccessConnection.ConnectionString">
+            <summary>
+            接続文字列を取得します。(オーバーライド)
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Access.AccessConnection.TableName">
+            <summary>
+            テーブル名
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Access.AccessConnection.GetSelectCommandText(System.String[])">
+            <summary>
+            SELECT 文を取得します。(オーバーライド)
+            </summary>
+            <param name="selects">Select 句</param>
+            <returns>SELECT 文を返します。</returns>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.Csv.CsvConnection">
+            <summary>
+            Csv ファイル用のデータベースの Connection を提供するクラスです。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Csv.CsvConnection.#ctor(System.String,CommonFeaturesLibrary.Providers.Enums.ConnectionTypes)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="fileName">ファイル名</param>
+            <param name="connectionType">接続タイプ</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Csv.CsvConnection.#ctor(System.IO.FileInfo,CommonFeaturesLibrary.Providers.Enums.ConnectionTypes)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="file">ファイル</param>
+            <param name="connectionType">接続タイプ</param>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Csv.CsvConnection.ConnectionString">
+            <summary>
+            接続文字列を取得します。(オーバーライド)
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Csv.CsvConnection.Hdr">
+            <summary>
+            最初の行が列名かどうかを表す値
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Csv.CsvConnection.ConnectionType">
+            <summary>
+            接続タイプ
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Csv.CsvConnection.GetSelectCommandText(System.String[])">
+            <summary>
+            SELECT 文を取得します。(オーバーライド)
+            </summary>
+            <param name="selects">Select 句</param>
+            <returns>SELECT 文を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Csv.CsvConnection.ProvideDataAdapter(System.String,System.String,System.Action{System.Data.Common.DbDataAdapter})">
+            <summary>
+            データベースアダプターを提供します。(オーバーライド)
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データベースアダプターを操作するメソッド</param>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.Enums.ConnectionTypes">
+            <summary>
+            データベース接続タイプの列挙体です。
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.Providers.Enums.ConnectionTypes.Odbc">
+            <summary>
+            ODBC
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.Providers.Enums.ConnectionTypes.OleDb">
+            <summary>
+            OLE DB
+            </summary>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.Enums.EImex">
+            <summary>
+            IMEXに関する列挙型です。
+            </summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.Providers.Enums.EImex.Export">
+            <summary>エクスポート</summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.Providers.Enums.EImex.Import">
+            <summary>インポート</summary>
+        </member>
+        <member name="F:CommonFeaturesLibrary.Providers.Enums.EImex.Link">
+            <summary>リンク(完全な更新が可能)</summary>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.Excel.ExcelConnection">
+            <summary>
+            Excel ファイル用のデータベースの Connection を提供するクラスです。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Excel.ExcelConnection.#ctor(System.String)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="fileName">ファイル名</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Excel.ExcelConnection.#ctor(System.IO.FileInfo)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="file">ファイル</param>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Excel.ExcelConnection.ConnectionString">
+            <summary>
+            接続文字列を取得します。(オーバーライド)
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Excel.ExcelConnection.TableName">
+            <summary>
+            テーブル名
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Excel.ExcelConnection.ConnectionType">
+            <summary>
+            接続タイプ
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Excel.ExcelConnection.GetSelectCommandText(System.String[])">
+            <summary>
+            SELECT 文を取得します。(オーバーライド)
+            </summary>
+            <param name="selects">Select 句</param>
+            <returns>SELECT 文を返します。</returns>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.FileProvider">
+            <summary>
+            ファイルにアクセスするメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.ProvideDataAdapterByOdbc(System.String,System.String,System.Action{System.Data.Common.DbDataAdapter})">
+            <summary>
+            データベースアダプターを提供します。(ODBC)
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データベースアダプターを操作するメソッド</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.ProvideDataAdapterByOleDb(System.String,System.String,System.Action{System.Data.Common.DbDataAdapter})">
+            <summary>
+            データベースアダプターを提供します。(OLE DB)
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データベースアダプターを操作するメソッド</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.ProvideCommandByOdbc(System.String,System.String,System.Action{System.Data.Common.DbCommand})">
+            <summary>
+            DbCommand を提供します。(ODBC)
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データリーダーを操作するメソッド</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.ProvideCommandByOleDb(System.String,System.String,System.Action{System.Data.Common.DbCommand})">
+            <summary>
+            DbCommand を提供します。(OLE DB)
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データリーダーを操作するメソッド</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetConnectionStringOfCsvByOdbc(System.IO.FileInfo)">
+            <summary>
+            CSVファイル形式の接続文字列を取得します。(ODBC)
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>CSVファイル形式の接続文字列を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetConnectionStringOfCsvByOleDb(System.IO.FileInfo,System.Boolean,System.Nullable{CommonFeaturesLibrary.Providers.Enums.EImex})">
+            <summary>
+            CSV ファイル形式の接続文字列を取得します。(OLE DB)
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="hdr">最初の行が列名かどうかを表す値</param>
+            <param name="imex">IMEX</param>
+            <returns>CSV ファイル形式の接続文字列を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetConnectionStringByExcel(System.IO.FileInfo,System.Boolean,System.Nullable{CommonFeaturesLibrary.Providers.Enums.EImex})">
+            <summary>
+            Excel ファイル形式の接続文字列を取得します。(OLE DB)
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="hdr">最初の行が列名かどうかを表す値</param>
+            <param name="imex">IMEX</param>
+            <returns>Excel ファイル形式の接続文字列を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetConnectionStringByAccess(System.IO.FileInfo,System.Nullable{CommonFeaturesLibrary.Providers.Enums.EImex})">
+            <summary>
+            Access ファイル形式の接続文字列を取得します。(OLE DB)
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="imex">IMEX</param>
+            <returns>Access ファイル形式の接続文字列を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetSelectCommandTextOfCsv(System.IO.FileInfo,System.String[])">
+            <summary>
+            CSVファイル形式のSQL SELECT ステートメント文字列を取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="selects">取得列</param>
+            <returns>SQL SELECT ステートメント文字列を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetSelectCommandTextOfExcel(System.IO.FileInfo,System.String,System.String[])">
+            <summary>
+            Excel ファイル形式の SQL SELECT ステートメント文字列を取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="tableName">テーブル名</param>
+            <param name="selects">取得列</param>
+            <returns>SQL SELECT ステートメント文字列を返します。</returns>
+            <remarks>
+            <para>指定したテーブル名のデータを取得します。</para>
+            <para>テーブル名の指定がない場合は、ファイル名と同名のシートのデータを取得します。</para>
+            </remarks>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetSelectCommandTextOfAccess(System.IO.FileInfo,System.String,System.String[])">
+            <summary>
+            Access ファイル形式の SQL SELECT ステートメント文字列を取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="tableName">テーブル名</param>
+            <param name="selects">取得列</param>
+            <returns>SQL SELECT ステートメント文字列を返します。</returns>
+            <remarks>
+            <para>指定したテーブル名のデータを取得します。</para>
+            <para>テーブル名の指定がない場合は、ファイル名と同名のシートのデータを取得します。</para>
+            </remarks>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.FileProvider.GetSelectPhrase(System.String[])">
+            <summary>
+            SELECT 句の文字列を取得します。
+            </summary>
+            <param name="selects">取得列</param>
+            <returns>SELECT 句の文字列を返します。</returns>
+        </member>
+        <member name="T:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase">
+            <summary>
+            ファイル用のデータベース Connection の抽象クラスです。
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.#ctor(System.String)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="fileName">ファイル名</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.#ctor(System.IO.FileInfo)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="file">ファイル</param>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.File">
+            <summary>
+            ファイル情報
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.ConnectionString">
+            <summary>
+            接続文字列
+            </summary>
+        </member>
+        <member name="P:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.Imex">
+            <summary>
+            IMEX
+            </summary>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.GetSelectCommandText(System.String[])">
+            <summary>
+            SELECT 文取得
+            </summary>
+            <param name="selects">Select 句</param>
+            <returns>SELECT 文を返します。</returns>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.Connect(System.Action{System.Data.Common.DbDataAdapter},System.String[])">
+            <summary>
+            データベースに接続して、操作します。
+            </summary>
+            <param name="action">操作するメソッド</param>
+            <param name="selects">Select 句</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.ProvideDataAdapter(System.String,System.String,System.Action{System.Data.Common.DbDataAdapter})">
+            <summary>
+            データベースアダプターを提供します。
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データベースアダプターを操作するメソッド</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.Execute(System.Action{System.Data.Common.DbCommand},System.String[])">
+            <summary>
+            DbCommand を構築します。
+            </summary>
+            <param name="action">操作するメソッド</param>
+            <param name="selects">Select 句</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.ProvideCommand(System.String,System.String,System.Action{System.Data.Common.DbCommand})">
+            <summary>
+            データリーダーを提供します。
+            </summary>
+            <param name="connectionString">接続文字列</param>
+            <param name="selectCommandText">SQL SELECT文またはストアドプロシージャである文字列</param>
+            <param name="action">データリーダーを操作するメソッド</param>
+        </member>
+        <member name="M:CommonFeaturesLibrary.Providers.Primitive.FileConnectionBase.Load(System.String[])">
+            <summary>
+            ファイルのデータを読込みます。
+            </summary>
+            <param name="selects">Select 句</param>
+            <returns>ファイルのデータを格納した DataTable を返します。</returns>
+            <exception cref="T:System.IO.FileNotFoundException">ファイルが存在しません。</exception>
+        </member>
+    </members>
+</doc>

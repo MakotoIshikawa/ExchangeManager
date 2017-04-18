@@ -35,6 +35,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonFeaturesLibrary, Version=1.2.6297.25603, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\CommonFeaturesLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ExtensionsLibrary, Version=1.2.6297.25602, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\ExtensionsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Exchange.WebServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Exchange.WebServices.Auth, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.Auth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -52,6 +68,15 @@
   <ItemGroup>
     <Compile Include="UnitTestExchangeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExchangeManager\ExchangeManager.csproj">
+      <Project>{db751cfb-2b19-47b7-8f0c-f3c90da641be}</Project>
+      <Name>ExchangeManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

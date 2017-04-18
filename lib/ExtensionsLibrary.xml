@@ -1,0 +1,1303 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ExtensionsLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:ExtensionsLibrary.CompareSelector`2">
+            <summary>
+            オブジェクトが等しいかどうかの比較をサポートするメソッドを定義します
+            </summary>
+            <typeparam name="T">オブジェクトの型</typeparam>
+            <typeparam name="TComparable">比較する値の型</typeparam>
+        </member>
+        <member name="M:ExtensionsLibrary.CompareSelector`2.#ctor(System.Func{`0,`1})">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="selector">比較する値を返すメソッド</param>
+        </member>
+        <member name="M:ExtensionsLibrary.CompareSelector`2.Equals(`0,`0)">
+            <summary>
+            指定したオブジェクトが等しいかどうかを判断します。
+            </summary>
+            <param name="x">比較対象の T 型の第 1 オブジェクト</param>
+            <param name="y">比較対象の T 型の第 2 オブジェクト</param>
+            <returns>指定したオブジェクトが等しい場合は true。
+            それ以外の場合は false。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.CompareSelector`2.GetHashCode(`0)">
+            <summary>
+            指定したオブジェクトのハッシュ コードを返します。
+            </summary>
+            <param name="obj">ハッシュ コードが返される対象のオブジェクト</param>
+            <returns>指定したオブジェクトのハッシュ コード</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.DataTableExtension">
+            <summary>
+            DataTable を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DataTableExtension.ConvertCollection``1(System.Data.DataTable)">
+            <summary>
+            コレクションに変換します。
+            </summary>
+            <typeparam name="T">コレクションの要素の型</typeparam>
+            <param name="this">データテーブル</param>
+            <returns>コレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DataTableExtension.GetRows(System.Data.DataTable)">
+            <summary>
+            行データのコレクションを取得します。
+            </summary>
+            <param name="this">DataTable</param>
+            <returns>行データのコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DataTableExtension.GetColumns(System.Data.DataTable)">
+            <summary>
+            列データのコレクションを取得します。
+            </summary>
+            <param name="this">DataTable</param>
+            <returns>列データのコレクションを返します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.DateTimeExtension">
+            <summary>
+            DateTime を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.IsDay(System.DateTime)">
+            <summary>
+            日付情報かどうかを表します。
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>日付情報かどうかを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DateTimeExtension.ToMilliSecondString(System.DateTime)">
+            <summary>
+            ミリ秒まで表示する時刻文字列に変換します。
+            </summary>
+            <param name="this">DateTime</param>
+            <returns>ミリ秒まで表示する時刻文字列を返します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.DictionaryExtension">
+            <summary>
+            Dictionary を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DictionaryExtension.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0)">
+            <summary>
+            値を取得します。存在しないKeyの場合は default 値を返します。
+            </summary>
+            <param name="this">マップ</param>
+            <param name="key">キー</param>
+            <returns>値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DictionaryExtension.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            値を取得します。存在しないKeyの場合は default 値を返します。
+            </summary>
+            <param name="this">マップ</param>
+            <param name="key">キー</param>
+            <param name="defaultValue">default 値</param>
+            <returns>値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DictionaryExtension.Swap``2(System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+            キーと値を入れ替えたディクショナリーを生成します。
+            </summary>
+            <param name="this">IDictionary インターフェイスを実装したクラス</param>
+            <returns>キーと値を入れ替えたディクショナリーを返します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.DirectoryInfoExtension">
+            <summary>
+            DirectoryInfo を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DirectoryInfoExtension.CreateFileInfo(System.IO.DirectoryInfo,System.String)">
+            <summary>
+            ファイル名を指定して、ファイル情報を作成します。
+            </summary>
+            <param name="this">DirectoryInfo</param>
+            <param name="fileName">ファイル名</param>
+            <returns>ファイル情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DirectoryInfoExtension.CreateChild(System.IO.DirectoryInfo,System.String)">
+            <summary>
+            ディレクトリー名を指定して、
+            子ディレクトリーの情報を作成します。
+            </summary>
+            <param name="this">DirectoryInfo</param>
+            <param name="name">ディレクトリー名</param>
+            <returns>ディレクトリー情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DirectoryInfoExtension.GetFileInfos(System.IO.DirectoryInfo,System.String,System.IO.SearchOption)">
+            <summary>
+            ディレクトリ内のファイル情報を列挙します。
+            </summary>
+            <param name="this">DirectoryInfo</param>
+            <param name="searchPattern">ファイル名と照合する検索文字列。</param>
+            <param name="searchOption">
+            <para>検索操作に現在のディレクトリのみか、すべてのサブディレクトリを含めるのかを指定する</para>
+            </param>
+            <returns>ファイル情報の列挙を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DirectoryInfoExtension.GetFileInfos(System.IO.DirectoryInfo,System.Boolean,System.String[])">
+            <summary>
+            ディレクトリ内のファイル情報を列挙します。
+            </summary>
+            <param name="this">DirectoryInfo</param>
+            <param name="all">すべてのサブディレクトリを含めるのかを指定する。</param>
+            <param name="excludes">除外パターン</param>
+            <returns>ファイル情報の列挙を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DirectoryInfoExtension.IsHidden(System.IO.FileSystemInfo)">
+            <summary>
+            隠しファイルかどうかを判定します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>隠しファイル属性であれば true を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.DirectoryInfoExtension.HasAttribute(System.IO.FileSystemInfo,System.IO.FileAttributes)">
+            <summary>
+            指定した属性を持っているか判定します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="attribute">属性</param>
+            <returns>属性を持っていれば true を返します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.EnumerableExtension">
+            <summary>
+            Enumerable を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            ForEach
+            </summary>
+            <param name="this">Enumerable</param>
+            <param name="action">メソッド</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            ForEach(中断可)
+            </summary>
+            <param name="this">Enumerable</param>
+            <param name="func">戻り値を返すメソッド</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,System.Int32})">
+            <summary>
+            ForEach(インデックス有)
+            </summary>
+            <param name="this">Enumerable</param>
+            <param name="action">メソッド</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,System.Boolean})">
+            <summary>
+            ForEach(インデックス有、中断可)
+            </summary>
+            <param name="this">Enumerable</param>
+            <param name="func">戻り値を返すメソッド</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Append``1(System.Collections.Generic.IEnumerable{``0},``0[])">
+            <summary>
+            シーケンスに追加します。
+            </summary>
+            <typeparam name="T">コレクションの型</typeparam>
+            <param name="this">コレクション</param>
+            <param name="items">追加する配列</param>
+            <returns>追加したコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Prepend``1(System.Collections.Generic.IEnumerable{``0},``0[])">
+            <summary>
+            シーケンスの先頭に挿入します。
+            </summary>
+            <typeparam name="T">コレクションの型</typeparam>
+            <param name="this">コレクション</param>
+            <param name="items">追加する配列</param>
+            <returns>挿入したコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.AddRange``1(System.Collections.ObjectModel.Collection{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            コレクションに要素のコレクションを追加します。
+            </summary>
+            <typeparam name="T">コレクションの型</typeparam>
+            <param name="this">コレクション</param>
+            <param name="elements">追加する要素のコレクション</param>
+            <returns>追加したコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Join``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            コレクションのメンバーを連結します。各メンバーの間には、指定した区切り記号が挿入されます。
+            </summary>
+            <typeparam name="T">メンバーの型</typeparam>
+            <param name="this">連結するオブジェクトを格納しているコレクション</param>
+            <param name="separator">区切り記号として使用する文字列</param>
+            <returns>values のメンバーから成る、separator 文字列で区切られた文字列。
+            values にメンバーがない場合、メソッドは String.Emptyを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Join``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.String)">
+            <summary>
+            シーケンスを連結します。各メンバーの間には、指定した区切り記号が挿入されます。
+            </summary>
+            <typeparam name="TSource">source の要素の型</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <param name="separator">区切り記号として使用する文字列</param>
+            <returns>連結したシーケンスを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.GetRowItems``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            指定した列数の行コレクションを取得します。
+            </summary>
+            <typeparam name="T">コレクションの型</typeparam>
+            <param name="this">コレクション</param>
+            <param name="count">列数</param>
+            <returns>行コレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Distinct``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            シーケンスから一意の要素を返します。
+            </summary>
+            <typeparam name="TSource">コレクション要素の型</typeparam>
+            <typeparam name="TComparable">比較する値の型</typeparam>
+            <param name="this">重複する要素を削除する対象となるシーケンス</param>
+            <param name="compareSelector">比較する値を返すメソッド</param>
+            <returns>ソース シーケンスの一意の要素を格納するコレクション</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToDictionary``4(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1},System.Func{``0,``2},System.Func{``1,``3})">
+            <summary>
+            指定されたキー セレクター関数、比較関数、および要素セレクター関数に従って、
+            IEnumerable(T) から Dictionary(TKey,TValue) を作成します。
+            </summary>
+            <typeparam name="TSource">source の要素の型。</typeparam>
+            <typeparam name="TKey">keySelector によって返されるキーの型。</typeparam>
+            <typeparam name="TElement">elementSelector によって返される値の型。</typeparam>
+            <typeparam name="TComparable">キーを比較する型。</typeparam>
+            <param name="this">Dictionary(TKey,TValue) の作成元の IEnumerable(T)。</param>
+            <param name="keySelector">各要素からキーを抽出する関数。</param>
+            <param name="elementSelector">各要素から結果の要素値を生成する変換関数。</param>
+            <param name="compareSelector">比較する値を返す関数。</param>
+            <returns>入力シーケンスから選択された TElement 型の値を格納する Dictionary(TKey,TValue)。</returns>
+            <exception cref="T:System.ArgumentNullException">
+            source、keySelector、または elementSelector が null です。
+            または keySelector が null のキーを生成しています。</exception>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToDictionary``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,``1})">
+            <summary>
+            指定されたキー セレクター関数に従って、
+            Dictionary を作成します。
+            </summary>
+            <typeparam name="TSource">source の要素の型</typeparam>
+            <typeparam name="TKey">keySelector によって返されるキーの型</typeparam>
+            <param name="this">作成元のコレクション</param>
+            <param name="keySelector">各要素からキーを抽出する関数</param>
+            <returns>キーと値を格納している Dictionary を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToDictionary``3(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Int32,``1},System.Func{``0,System.Int32,``2})">
+            <summary>
+            指定されたキー セレクター関数および要素セレクター関数に従って、
+            Dictionary を作成します。
+            </summary>
+            <typeparam name="TSource">source の要素の型</typeparam>
+            <typeparam name="TKey">keySelector によって返されるキーの型</typeparam>
+            <typeparam name="TElement">elementSelector によって返される値の型</typeparam>
+            <param name="this">作成元のコレクション</param>
+            <param name="keySelector">各要素からキーを抽出する関数</param>
+            <param name="elementSelector">各要素から結果の要素値を生成する変換関数</param>
+            <returns>入力シーケンスから選択された TElement 型の値を格納する Dictionary を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToDictionary``2(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{``0,``1}})">
+            <summary>
+            連想配列に変換します。
+            </summary>
+            <typeparam name="TKey">キーの型</typeparam>
+            <typeparam name="TValue">値の型</typeparam>
+            <param name="this">キー、値ペアのコレクション</param>
+            <returns>変換した連想配列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToList``1(System.Array)">
+            <summary>
+            IEnumerable の要素を新しい ObjectArray 配列にコピーします。
+            </summary>
+            <typeparam name="T">ジェネリックの型</typeparam>
+            <param name="this">列挙</param>
+            <returns>
+            IEnumerable の要素のコピーを格納する ObjectArray 配列。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToArray``1(System.Array)">
+            <summary>
+            IEnumerable の要素を新しい System.Object 配列にコピーします。
+            </summary>
+            <typeparam name="T">ジェネリックの型</typeparam>
+            <param name="this">列挙</param>
+            <returns>
+            IEnumerable の要素のコピーを格納する System.Object 配列。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.IndexOf``1(System.Collections.Generic.IEnumerable{``0},``0)">
+            <summary>
+            IEnumerable 全体で、指定したオブジェクトを検索し、
+            最初に見つかった位置の 0 から始まるインデックスを返します。
+            </summary>
+            <typeparam name="T">ジェネリックの型</typeparam>
+            <param name="this">列挙</param>
+            <param name="item">IEnumerable 内で検索するオブジェクト。
+            参照型の場合、null の値を使用できます。</param>
+            <returns>
+            IEnumerable 全体内で item が見つかった場合は、最初に見つかった位置の 0 から始まるインデックス。
+            それ以外の場合は -1。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Remove``1(System.Collections.Generic.IList{``0},System.Func{``0,System.Boolean})">
+            <summary>
+            述語に基づいて、条件を満たしている要素をコレクションから削除します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <param name="this">フィルター処理するリスト</param>
+            <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.Remove``1(System.Collections.Generic.IList{``0},System.Func{``0,System.Int32,System.Boolean})">
+            <summary>
+            述語に基づいて、条件を満たしている要素をコレクションから削除します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <param name="this">フィルター処理するリスト</param>
+            <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。
+            この関数の 2 つ目のパラメーターは、ソース要素のインデックスを表します。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.RemoveAfter``1(System.Collections.Generic.IList{``0},System.Int32)">
+            <summary>
+            指定したインデックス以降にある全ての要素を削除します。
+            </summary>
+            <param name="this">コレクション</param>
+            <param name="index">要素の、0 から始まるインデックス番号。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.JoinOnIndex``2(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1})">
+            <summary>
+            一致するインデックスに基づいて 2 つのシーケンスの要素を相互に関連付けます。
+            </summary>
+            <typeparam name="TOuter">元となるコレクション要素の型</typeparam>
+            <typeparam name="TInner">結合するコレクション要素の型く</typeparam>
+            <param name="this">結合する最初のシーケンス。</param>
+            <param name="inner">最初のシーケンスに結合するシーケンス。</param>
+            <returns>2 つのシーケンスに対して内部結合を実行したシーケンスを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.JoinOnIndex``3(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Func{``0,``1,``2})">
+            <summary>
+            一致するインデックスに基づいて 2 つのシーケンスの要素を相互に関連付けます。
+            </summary>
+            <typeparam name="TOuter">元となるコレクション要素の型</typeparam>
+            <typeparam name="TInner">結合するコレクション要素の型く</typeparam>
+            <typeparam name="TResult">結果の要素の型</typeparam>
+            <param name="this">結合する最初のシーケンス。</param>
+            <param name="inner">最初のシーケンスに結合するシーケンス。</param>
+            <param name="resultSelector">一致する 2 つの要素から結果の要素を作成する関数。</param>
+            <returns>2 つのシーケンスに対して内部結合を実行したシーケンスを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.ToDataTable(System.Collections.Generic.IEnumerable{System.Collections.Generic.IEnumerable{System.String}},System.String)">
+            <summary>
+            文字列コレクションの列挙をデータテーブルに変換します。
+            </summary>
+            <param name="this">文字列コレクションの列挙</param>
+            <param name="tableName">テーブル名</param>
+            <returns>データテーブルを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MaxElementsBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            最大値を持つ要素を取得します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <returns>最大値を持つ要素を全て返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.MinElementsBy``2(System.Collections.Generic.IEnumerable{``0},System.Func{``0,``1})">
+            <summary>
+            最小値を持つ要素を取得します。
+            </summary>
+            <typeparam name="TSource">collection の要素の型。</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">変換関数を呼び出す対象となる値のシーケンス</param>
+            <param name="selector">各要素に適用する変換関数</param>
+            <returns>最小値を持つ要素を全て返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.EnumerableExtension.StructuralEquals(System.Collections.IStructuralEquatable,System.Collections.IStructuralEquatable)">
+            <summary>
+            構造的に同等かどうかを判定します。
+            </summary>
+            <param name="this">IStructuralEquatable</param>
+            <param name="other">現在のインスタンスと比較するオブジェクト</param>
+            <returns>
+            <para>2 つのオブジェクトが等しい場合は true</para>
+            <para>それ以外の場合は false</para>
+            </returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.FileInfoExtension">
+            <summary>
+            FileInfo を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.CreateText(System.IO.FileInfo,System.Boolean,System.Text.Encoding)">
+            <summary>
+            追加方法とエンコーディングを指定して、
+            新しいテキスト ファイルに書き込みを行う StreamWriter を作成します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="append">
+            データをファイルに追加する場合は true、ファイルを上書きする場合は false。
+            <para>指定されたファイルが存在しない場合、このパラメーターは無効であり、コンストラクターは新しいファイルを作成します。</para>
+            </param>
+            <param name="encoding">使用する文字エンコーディング</param>
+            <returns>新しい StreamWriter を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.GetNameWithoutExtension(System.IO.FileInfo)">
+            <summary>
+            拡張子なしのファイル名を取得します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>拡張子なしのファイル名を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.ChangeExtension(System.IO.FileInfo,System.String)">
+            <summary>
+            ファイルパスの拡張子を変更します。
+            </summary>
+            <param name="this">ファイル情報</param>
+            <param name="extension">新しい拡張子</param>
+            <returns>拡張子を変更したファイルパスを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.IsImage(System.IO.FileInfo)">
+            <summary>
+            イメージファイルかどうかを判定します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>イメージファイルであれば true を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.IsSharePointIcon(System.IO.FileInfo)">
+            <summary>
+            SharePoint の icon に対応しているファイルかどうかを判定します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>SharePoint の icon に対応しているファイルであれば true を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.ContainsAtExtension(System.IO.FileInfo,System.String[])">
+            <summary>
+            拡張子を判定ます。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="exts">拡張子の配列</param>
+            <returns>該当する拡張子があれば true を返します。それ以外は false</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.ReadText(System.IO.FileInfo)">
+            <summary>
+            ファイルからテキストを読み込みます。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>読み込んだテキストを全て返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.ReadTextAsync(System.IO.FileInfo)">
+            <summary>
+            ファイルからテキストを読み込みます。[非同期]
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>読み込んだテキストを全て返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.WriteLine(System.IO.FileInfo,System.String)">
+            <summary>
+            文字列を書き込み、続けて行終端記号を書き込みます。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="message">メッセージ</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.WriteLineAsync(System.IO.FileInfo,System.String)">
+            <summary>
+            文字列を書き込み、続けて行終端記号を書き込みます。[非同期]
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="message">メッセージ</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.Clear(System.IO.FileInfo)">
+            <summary>
+            ファイルのデータを初期化します。
+            </summary>
+            <param name="this">FileInfo</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.Copy(System.IO.FileInfo,System.IO.Stream)">
+            <summary>
+            指定した Stream の内容をコピーします。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="stream">Stream</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.FileInfoExtension.CopyAsync(System.IO.FileInfo,System.IO.Stream)">
+            <summary>
+            指定した Stream の内容をコピーします。[非同期]
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="stream">Stream</param>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.GenericsExtension">
+            <summary>
+            ジェネリックスを拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetValueOrDefault``2(``0,System.Func{``0,``1})">
+            <summary>
+            null かどうかを判定して値を取得します。
+            </summary>
+            <typeparam name="T">値を取得するインスタンスの型</typeparam>
+            <typeparam name="TResult">戻り値の型</typeparam>
+            <param name="this">値を取得するインスタンス</param>
+            <param name="func">値を取得するメソッド</param>
+            <returns>null かどうかを判定して値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetValueOrDefault``2(``0,System.Func{``0,``1},``1)">
+            <summary>
+            null かどうかを判定して値を取得します。
+            </summary>
+            <typeparam name="T">値を取得するインスタンスの型</typeparam>
+            <typeparam name="TResult">戻り値の型</typeparam>
+            <param name="this">値を取得するインスタンス</param>
+            <param name="func">値を取得するメソッド</param>
+            <param name="defaultValue">default 値</param>
+            <returns>null かどうかを判定して値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetCollection``2(``0,System.Func{``0,System.Collections.Generic.IEnumerable{``1}})">
+            <summary>
+            null かどうかを判定してコレクションを取得します。
+            </summary>
+            <typeparam name="T">値を取得するインスタンスの型</typeparam>
+            <typeparam name="TResult">戻り値コレクションの型</typeparam>
+            <param name="this">値を取得するインスタンス</param>
+            <param name="func">値を取得するメソッド</param>
+            <returns>null かどうかを判定してコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetString``1(``0,System.Func{``0,System.String})">
+            <summary>
+            null かどうかを判定して文字列を取得します。
+            </summary>
+            <typeparam name="T">値を取得するインスタンスの型</typeparam>
+            <param name="this">値を取得するインスタンス</param>
+            <param name="func">文字列を取得するメソッド</param>
+            <returns>null かどうかを判定して文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetMembers``1(``0)">
+            <summary>
+            パブリックなフィールドとプロパティの情報を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">this</param>
+            <returns>メンバー情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetPropertyInfo``1(``0,System.String)">
+            <summary>
+            プロパティ名を指定して、プロパティ情報を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <param name="name">プロパティ名</param>
+            <returns>プロパティ情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetPropertyValue``1(``0,System.String)">
+            <summary>
+            プロパティ名を指定して、値を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <param name="name">プロパティ名</param>
+            <returns>値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.SetPropertyValue``1(``0,System.String,System.Object)">
+            <summary>
+            プロパティ名を指定して、値を設定します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <param name="name">プロパティ名</param>
+            <param name="value">設定する値</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetProperties``1(``0)">
+            <summary>
+            プロパティ情報のコレクションを取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <returns>プロパティ情報のコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.SetProperties``1(``0,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+            <summary>
+            プロパティ名と値の KeyValuePair のコレクションを指定して、
+            対象のインスタンスのプロパティに値を設定します。
+            </summary>
+            <typeparam name="T">対象のインスタンスの型</typeparam>
+            <param name="this">T</param>
+            <param name="properties">プロパティ名と値の KeyValuePair のコレクション</param>
+            <returns>プロパティを設定した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ToPropertyDictionary``1(``0)">
+            <summary>
+            プロパティの Dictionary に変換します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <returns>Dictionary を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetPropertiesString``1(``0,System.Boolean)">
+            <summary>
+            プロパティ情報の文字列を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">インスタンス</param>
+            <param name="nullShow">NULL を表示するかどうか</param>
+            <returns>プロパティ情報の文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetFieldInfo``1(``0,System.String)">
+            <summary>
+            フィールド名を指定して、フィールド情報を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <param name="name">フィールド名</param>
+            <returns>フィールド情報を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetFieldValue``1(``0,System.String)">
+            <summary>
+            フィールド名を指定して、値を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <param name="name">フィールド名</param>
+            <returns>値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.SetFieldValue``1(``0,System.String,System.Object)">
+            <summary>
+            フィールド名を指定して、値を設定します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <param name="name">フィールド名</param>
+            <param name="value">設定する値</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetFields``1(``0)">
+            <summary>
+            フィールド情報のコレクションを取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <returns>フィールド情報のコレクションを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.SetFields``1(``0,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+            <summary>
+            フィールド名と値の KeyValuePair のコレクションを指定して、
+            対象のインスタンスのフィールドに値を設定します。
+            </summary>
+            <typeparam name="T">対象のインスタンスの型</typeparam>
+            <param name="this">T</param>
+            <param name="fields">フィールド名と値の KeyValuePair のコレクション</param>
+            <returns>フィールドを設定した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ToFieldDictionary``1(``0)">
+            <summary>
+            フィールドの Dictionary に変換します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">対象のインスタンス</param>
+            <returns>Dictionary を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.GetFieldsString``1(``0,System.Boolean)">
+            <summary>
+            フィールド情報の文字列を取得します。
+            </summary>
+            <typeparam name="T">インスタンスの型</typeparam>
+            <param name="this">インスタンス</param>
+            <param name="nullShow">NULL を表示するかどうか</param>
+            <returns>フィールド情報の文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ChangeType``1(``0,System.Type)">
+            <summary>
+            指定されたオブジェクトと等しい値を持つ、指定された型のオブジェクトを返します。
+            </summary>
+            <typeparam name="TConvertible">IConvertible 型</typeparam>
+            <param name="this">IConvertible インターフェイスを実装するオブジェクト。</param>
+            <param name="conversionType">返すオブジェクトの型。</param>
+            <returns>型が conversionType であり、@this と等価の値を持つオブジェクト。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.GenericsExtension.ChangeType``1(``0,System.TypeCode)">
+            <summary>
+            指定したオブジェクトに等しい値を持つ指定した型のオブジェクトを返します。
+            </summary>
+            <typeparam name="TConvertible">IConvertible 型</typeparam>
+            <param name="this">IConvertible インターフェイスを実装するオブジェクト。</param>
+            <param name="typeCode">返すオブジェクトの型。</param>
+            <returns>基になる型が typeCode であり、@this と等価の値を持つオブジェクト。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.ListAddExtension">
+            <summary>
+            ジェネリックのリストに要素を追加する拡張メソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListAddExtension.Add(System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String,System.Object)">
+            <summary>
+            SqlParameter のリストに要素を追加します。
+            </summary>
+            <param name="this">SqlParameter のリスト</param>
+            <param name="parameterName">パラメーター名</param>
+            <param name="value">値</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListAddExtension.Add(System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String,System.String)">
+            <summary>
+            SqlParameter のリストに要素を追加します。
+            </summary>
+            <param name="this">SqlParameter のリスト</param>
+            <param name="parameterName">パラメーター名</param>
+            <param name="value">値</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListAddExtension.Add(System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String,System.Data.SqlDbType,System.Int32,System.String)">
+            <summary>
+            SqlParameter のリストに要素を追加します。
+            </summary>
+            <param name="this">SqlParameter のリスト</param>
+            <param name="parameterName">パラメーター名</param>
+            <param name="dbType"></param>
+            <param name="size"></param>
+            <param name="sourceColumn"></param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListAddExtension.Add(System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String,System.Data.SqlDbType,System.Int32,System.Data.ParameterDirection,System.Boolean,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Object)">
+            <summary>
+            SqlParameter のリストに要素を追加します。
+            </summary>
+            <param name="this">SqlParameter のリスト</param>
+            <param name="parameterName">パラメーター名</param>
+            <param name="dbType">DBタイプ</param>
+            <param name="size">サイズ</param>
+            <param name="direction">ParameterDirection</param>
+            <param name="isNullable">NULLかどうか</param>
+            <param name="precision">precision</param>
+            <param name="scale">scale</param>
+            <param name="sourceColumn">sourceColumn</param>
+            <param name="sourceVersion">sourceVersion</param>
+            <param name="value">値</param>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.ListExtension">
+            <summary>
+            ジェネリックの List を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ListExtension.Prepend``1(System.Collections.Generic.List{``0},``0)">
+            <summary>
+            先頭に要素を追加します。
+            </summary>
+            <typeparam name="T">要素の型</typeparam>
+            <param name="this">リスト</param>
+            <param name="item">要素</param>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.ObjectExtension">
+            <summary>
+            Object を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToBoolean(System.Object)">
+            <summary>
+            Boolean 型に変換します。
+            </summary>
+            <param name="this">object</param>
+            <returns>変換した Boolean 値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.String,System.Nullable{``0})">
+            <summary>
+            文字列を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">文字列</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.Int32,System.Nullable{``0})">
+            <summary>
+            文字列を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(int)</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.Int16,System.Nullable{``0})">
+            <summary>
+            文字列を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(short)</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToEnum``1(System.Byte,System.Nullable{``0})">
+            <summary>
+            文字列を列挙型に変換します。
+            </summary>
+            <typeparam name="TResult">列挙型</typeparam>
+            <param name="this">数値(byte)</param>
+            <param name="defaultValue">デフォルト値</param>
+            <returns>列挙型を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.ToDictionary``1">
+            <summary>
+            Dictionary に変換します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <returns>Dictionary を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.ObjectExtension.GetEnumValues``1">
+            <summary>
+            列挙体に含まれている定数の値の配列を取得します。
+            </summary>
+            <typeparam name="TEnum">列挙体の型</typeparam>
+            <returns>定数の値を格納する配列を取得します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.StringExtension">
+            <summary>
+            文字列を補助する拡張メソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.GetTimeLog(System.String)">
+            <summary>
+            時刻ログを取得します。
+            </summary>
+            <param name="this">メッセージ</param>
+            <remarks>
+            時刻を付加した文字列を取得します。</remarks>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.HasString(System.String,System.String)">
+            <summary>
+            指定された文字列が存在するかどうかを示します。
+            </summary>
+            <param name="this">テストする文字列。</param>
+            <param name="word">検索する文字列</param>
+            <returns>その文字列が見つかった場合は、true。
+            見つからなかった場合は false。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.CommentOut(System.String,System.String)">
+            <summary>
+            文字列から指定された記号以降の文字列をコメントアウトします。
+            </summary>
+            <param name="this">対象文字列</param>
+            <param name="sign">記号</param>
+            <returns>コメントアウトされた文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableShort(System.String)">
+            <summary>
+            short? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableInt(System.String)">
+            <summary>
+            int? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableLong(System.String)">
+            <summary>
+            long? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableUint(System.String)">
+            <summary>
+            uint? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableFloat(System.String)">
+            <summary>
+            float? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableDouble(System.String)">
+            <summary>
+            double? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableDecimal(System.String)">
+            <summary>
+            decimal? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToNullableBool(System.String)">
+            <summary>
+            bool? 型に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Nullable 値に変換した値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Repeat(System.String,System.Int32)">
+            <summary>
+            繰り返し文字列生成
+            </summary>
+            <param name="this">文字列</param>
+            <param name="repeat">個数</param>
+            <returns>生成文字列</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Repeat(System.Char,System.Int32)">
+            <summary>
+            繰り返し文字列生成
+            </summary>
+            <param name="this">文字列</param>
+            <param name="repeat">個数</param>
+            <returns>生成文字列</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.CreateStream(System.String,System.Text.Encoding)">
+            <summary>
+            MemoryStream を生成します。
+            </summary>
+            <param name="this">文字列</param>
+            <param name="encoding">エンコーディング</param>
+            <returns>MemoryStream の新しいインスタンスを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.IsEmpty(System.String)">
+            <summary>
+            指定された文字列が null または System.String.Empty 文字列であるかどうかを示します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>null または空の文字列 ("") の場合は true。
+            それ以外の場合は false。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.IsWhiteSpace(System.String)">
+            <summary>
+            指定された文字列が null または空であるか、空白文字だけで構成されているかどうかを示します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>null または または空の文字列 ("") であるか、空白文字だけで構成されている場合は true。
+            それ以外の場合は false。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Join(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            String コレクションのメンバーを連結します。各メンバーの間には、指定した区切り記号が挿入されます。
+            </summary>
+            <param name="this">連結する文字列を格納しているコレクション</param>
+            <param name="separator">区切り記号として使用する文字列</param>
+            <returns>separator 文字列で区切られた文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToBase64(System.String)">
+            <summary>
+            Base64 の数字でエンコードされた等価の文字列形式に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>Base64 の数字でエンコードされた文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToBase64(System.String,System.Text.Encoding)">
+            <summary>
+            エンコードを指定して、
+            Base64 の数字でエンコードされた等価の文字列形式に変換します。
+            </summary>
+            <param name="this">文字列</param>
+            <param name="enc">エンコード</param>
+            <returns>Base64 の数字でエンコードされた文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.FromBase64(System.String)">
+            <summary>
+            Base64 の数字でエンコードされた文字列から文字列に変換します。
+            </summary>
+            <param name="this">Base64 数字エンコード文字列</param>
+            <returns>変換された文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.FromBase64(System.String,System.Text.Encoding)">
+            <summary>
+            エンコードを指定して、
+            Base64 の数字でエンコードされた文字列から文字列に変換します。
+            </summary>
+            <param name="this">Base64 数字エンコード文字列</param>
+            <param name="enc">エンコード</param>
+            <returns>変換された文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.GetValueOrEmpty(System.String)">
+            <summary>
+            null かどうかを判定して文字列を取得します。
+            </summary>
+            <param name="this">文字列</param>
+            <returns>null 場合 string.Empty を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Left(System.String,System.Int32)">
+            <summary>
+            文字列の左端から指定された文字数分の文字列を取得します。
+            </summary>
+            <param name="this">string</param>
+            <param name="length">取り出す文字数</param>
+            <returns>取り出した文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Mid(System.String,System.Int32)">
+            <summary>
+            指定された位置から文字列を取得します。
+            </summary>
+            <param name="this">string</param>
+            <param name="start">開始位置</param>
+            <returns>取り出した文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Mid(System.String,System.Int32,System.Int32)">
+            <summary>
+            指定された位置から、指定された文字数分の文字列を取得します。
+            </summary>
+            <param name="this">string</param>
+            <param name="start">開始位置</param>
+            <param name="length">取り出す文字数</param>
+            <returns>取り出した文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Right(System.String,System.Int32)">
+            <summary>
+            文字列の右端から指定された文字数分の文字列を取得します。
+            </summary>
+            <param name="this">string</param>
+            <param name="length">取り出す文字数</param>
+            <returns>取り出した文字列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ToDateTime(System.String,System.String)">
+            <summary>
+            文字列を DateTime に変換します。
+            </summary>
+            <param name="this">string</param>
+            <param name="format">書式</param>
+            <returns>DateTime を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.ContainsAtExtension(System.String,System.String[])">
+            <summary>
+            指定したファイルパス文字列の
+            拡張子を判定ます。
+            </summary>
+            <param name="this">ファイル名</param>
+            <param name="exts">拡張子の配列</param>
+            <returns>該当する拡張子があれば true を返します。それ以外は false</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.Split(System.String,System.Boolean,System.String[])">
+            <summary>
+            配列内の文字列に基づいて文字列を部分文字列に分割します。
+            部分文字列が空の配列の要素を含めるかどうかを指定することができます。
+            </summary>
+            <param name="this">string</param>
+            <param name="removeEmpty"><para>空の配列要素を省略する場合は true</para>
+            <para>空の配列要素も含める場合は false</para></param>
+            <param name="separator">この文字列から部分文字列を取り出すために区切り文字として使用する文字列配列。
+            <para>区切り文字が含まれていない空の配列。または null。</para></param>
+            <returns>この文字列を、separator 配列のいずれかまたは複数の要素 (文字列) で区切ることによって取り出された部分文字列を格納する配列。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.TupleExtension">
+            <summary>
+            Tuple クラスを拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``1(System.Collections.Generic.List{System.Tuple{``0}},``0)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <param name="this">1 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``2(System.Collections.Generic.List{System.Tuple{``0,``1}},``0,``1)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <typeparam name="T2">組の 2 番目のコンポーネントの型</typeparam>
+            <param name="this">2 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+            <param name="item2">リストの末尾に追加する 2 番目のオブジェクト。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``3(System.Collections.Generic.List{System.Tuple{``0,``1,``2}},``0,``1,``2)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <typeparam name="T2">組の 2 番目のコンポーネントの型</typeparam>
+            <typeparam name="T3">組の 3 番目のコンポーネントの型</typeparam>
+            <param name="this">3 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+            <param name="item2">リストの末尾に追加する 2 番目のオブジェクト。</param>
+            <param name="item3">リストの末尾に追加する 3 番目のオブジェクト。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``4(System.Collections.Generic.List{System.Tuple{``0,``1,``2,``3}},``0,``1,``2,``3)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <typeparam name="T2">組の 2 番目のコンポーネントの型</typeparam>
+            <typeparam name="T3">組の 3 番目のコンポーネントの型</typeparam>
+            <typeparam name="T4">組の 4 番目のコンポーネントの型</typeparam>
+            <param name="this">4 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+            <param name="item2">リストの末尾に追加する 2 番目のオブジェクト。</param>
+            <param name="item3">リストの末尾に追加する 3 番目のオブジェクト。</param>
+            <param name="item4">リストの末尾に追加する 4 番目のオブジェクト。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``5(System.Collections.Generic.List{System.Tuple{``0,``1,``2,``3,``4}},``0,``1,``2,``3,``4)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <typeparam name="T2">組の 2 番目のコンポーネントの型</typeparam>
+            <typeparam name="T3">組の 3 番目のコンポーネントの型</typeparam>
+            <typeparam name="T4">組の 4 番目のコンポーネントの型</typeparam>
+            <typeparam name="T5">組の 5 番目のコンポーネントの型</typeparam>
+            <param name="this">5 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+            <param name="item2">リストの末尾に追加する 2 番目のオブジェクト。</param>
+            <param name="item3">リストの末尾に追加する 3 番目のオブジェクト。</param>
+            <param name="item4">リストの末尾に追加する 4 番目のオブジェクト。</param>
+            <param name="item5">リストの末尾に追加する 5 番目のオブジェクト。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``6(System.Collections.Generic.List{System.Tuple{``0,``1,``2,``3,``4,``5}},``0,``1,``2,``3,``4,``5)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <typeparam name="T2">組の 2 番目のコンポーネントの型</typeparam>
+            <typeparam name="T3">組の 3 番目のコンポーネントの型</typeparam>
+            <typeparam name="T4">組の 4 番目のコンポーネントの型</typeparam>
+            <typeparam name="T5">組の 5 番目のコンポーネントの型</typeparam>
+            <typeparam name="T6">組の 6 番目のコンポーネントの型</typeparam>
+            <param name="this">6 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+            <param name="item2">リストの末尾に追加する 2 番目のオブジェクト。</param>
+            <param name="item3">リストの末尾に追加する 3 番目のオブジェクト。</param>
+            <param name="item4">リストの末尾に追加する 4 番目のオブジェクト。</param>
+            <param name="item5">リストの末尾に追加する 5 番目のオブジェクト。</param>
+            <param name="item6">リストの末尾に追加する 6 番目のオブジェクト。</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TupleExtension.Add``7(System.Collections.Generic.List{System.Tuple{``0,``1,``2,``3,``4,``5,``6}},``0,``1,``2,``3,``4,``5,``6)">
+            <summary>
+            リストの末尾にオブジェクトを追加します。
+            </summary>
+            <typeparam name="T1">組の 1 番目のコンポーネントの型</typeparam>
+            <typeparam name="T2">組の 2 番目のコンポーネントの型</typeparam>
+            <typeparam name="T3">組の 3 番目のコンポーネントの型</typeparam>
+            <typeparam name="T4">組の 4 番目のコンポーネントの型</typeparam>
+            <typeparam name="T5">組の 5 番目のコンポーネントの型</typeparam>
+            <typeparam name="T6">組の 6 番目のコンポーネントの型</typeparam>
+            <typeparam name="T7">組の 7 番目のコンポーネントの型</typeparam>
+            <param name="this">7 つの要素で構成される組のリスト</param>
+            <param name="item1">リストの末尾に追加する 1 番目のオブジェクト。</param>
+            <param name="item2">リストの末尾に追加する 2 番目のオブジェクト。</param>
+            <param name="item3">リストの末尾に追加する 3 番目のオブジェクト。</param>
+            <param name="item4">リストの末尾に追加する 4 番目のオブジェクト。</param>
+            <param name="item5">リストの末尾に追加する 5 番目のオブジェクト。</param>
+            <param name="item6">リストの末尾に追加する 6 番目のオブジェクト。</param>
+            <param name="item7">リストの末尾に追加する 7 番目のオブジェクト。</param>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.TypeExtension">
+            <summary>
+            Type を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexer(System.Type)">
+            <summary>
+            インデクサを取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <returns>インデクサを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexer(System.Type,System.Type)">
+            <summary>
+            インデクサを取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <param name="returnType">プロパティの戻り値の型。</param>
+            <returns>インデクサを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexer(System.Type,System.Type[])">
+            <summary>
+            インデクサを取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <param name="types">取得するインデックス付きプロパティに対するパラメーターの数値、順序、および型を表す System.Type オブジェクトの配列。 または インデックス付けされていないプロパティを取得するための、System.Type 型の空の配列 (Type[] types = new Type[0])。</param>
+            <returns>インデクサを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexer(System.Type,System.Type,System.Type[])">
+            <summary>
+            インデクサを取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <param name="returnType">プロパティの戻り値の型。</param>
+            <param name="types">取得するインデックス付きプロパティに対するパラメーターの数値、順序、および型を表す System.Type オブジェクトの配列。 または インデックス付けされていないプロパティを取得するための、System.Type 型の空の配列 (Type[] types = new Type[0])。</param>
+            <returns>インデクサを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexer(System.Type,System.Type,System.Type[],System.Reflection.ParameterModifier[])">
+            <summary>
+            インデクサを取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <param name="returnType">プロパティの戻り値の型。</param>
+            <param name="types">取得するインデックス付きプロパティに対するパラメーターの数値、順序、および型を表す System.Type オブジェクトの配列。 または インデックス付けされていないプロパティを取得するための、System.Type 型の空の配列 (Type[] types = new Type[0])。</param>
+            <param name="modifiers">types 配列内の対応する要素に関連付けられている属性を表す System.Reflection.ParameterModifier オブジェクトの配列。既定のバインダーは、このパラメーターを処理しません。</param>
+            <returns>インデクサを返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexerName(System.Type)">
+            <summary>
+            インデクサの名前を取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <returns>インデクサの名前を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.GetIndexers(System.Type)">
+            <summary>
+            インデクサ情報の配列を取得します。
+            </summary>
+            <param name="this"><see cref="T:System.Type" /></param>
+            <returns>インデクサ情報の配列を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.TypeExtension.IsNullable(System.Type)">
+            <summary>
+            Nullable かどうかを判定します。
+            </summary>
+            <param name="this"></param>
+            <returns>Nullable かどうかを返します。</returns>
+        </member>
+        <member name="T:ExtensionsLibrary.Extensions.UriExtension">
+            <summary>
+            Uri クラスを拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.UriExtension.GetFileName(System.Uri)">
+            <summary>
+            URI パス文字列のファイル名と拡張子を返します。
+            </summary>
+            <param name="this">Uri</param>
+            <returns>URI の最後のディレクトリ文字の後ろの文字を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.UriExtension.GetFileNameWithoutExtension(System.Uri)">
+            <summary>
+            URI パス文字列のファイル名を拡張子を付けずに返します。
+            </summary>
+            <param name="this">Uri</param>
+            <returns>URI の最後のディレクトリ文字の後ろの拡張子を除く文字を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.UriExtension.IsImage(System.Uri)">
+            <summary>
+            イメージファイルかどうかを判定します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>イメージファイルであれば true を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.UriExtension.IsSharePointIcon(System.Uri)">
+            <summary>
+            SharePoint の icon に対応しているファイルかどうかを判定します。
+            </summary>
+            <param name="this">FileInfo</param>
+            <returns>SharePoint の icon に対応しているファイルであれば true を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.UriExtension.ContainsAtExtension(System.Uri,System.String[])">
+            <summary>
+            拡張子を判定ます。
+            </summary>
+            <param name="this">FileInfo</param>
+            <param name="exts">拡張子の配列</param>
+            <returns>該当する拡張子があれば true を返します。それ以外は false</returns>
+        </member>
+    </members>
+</doc>
