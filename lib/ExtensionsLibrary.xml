@@ -790,6 +790,92 @@
             <param name="this">リスト</param>
             <param name="item">要素</param>
         </member>
+        <member name="T:ExtensionsLibrary.Extensions.MathExtension">
+            <summary>
+            数値関数の拡張メソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.Int16,System.Int16,System.Int16)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.UInt16,System.UInt16,System.UInt16)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.UInt32,System.UInt32,System.UInt32)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.Int64,System.Int64,System.Int64)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.UInt64,System.UInt64,System.UInt64)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.Single,System.Single,System.Single)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.Double,System.Double,System.Double)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.MathExtension.WithinRange(System.Decimal,System.Decimal,System.Decimal)">
+            <summary>
+            上限と下限を設定して、範囲内の値を取得します。
+            </summary>
+            <param name="value">値</param>
+            <param name="min">下限値</param>
+            <param name="max">上限値</param>
+            <returns>範囲内の値を返します。</returns>
+        </member>
         <member name="T:ExtensionsLibrary.Extensions.ObjectExtension">
             <summary>
             Object を拡張するメソッドを提供します。
