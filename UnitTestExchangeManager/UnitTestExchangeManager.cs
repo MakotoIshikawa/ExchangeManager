@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using ExchangeManager;
 using ExchangeManager.Extensions;
-using Microsoft.Exchange.WebServices.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Ews = Microsoft.Exchange.WebServices.Data;
+using ExtensionsLibrary.Extensions;
 
 namespace UnitTestExchangeManager {
 	[TestClass]
@@ -26,7 +30,47 @@ namespace UnitTestExchangeManager {
 
 			var subject = "Hello World!";
 			var text = "これは、EWS Managed APIを使用して送信した最初のメールです。";
-			var to = _username + ";" + "ishikawm@fsi.co.jp";
+			var to = _username + ";" + "root@kariverification14.onmicrosoft.com";
+
+			service.SendMail(to, subject, text);
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("送信")]
+		public async Task 非同期でメールを送信する() {
+			var service = new ExchangeOnlineManager(_username, _password);
+
+			var subject = "Hello World!";
+			var text = "これは、EWS Managed APIを使用して非同期で送信したメールです。";
+			var to = _username + ";" + "root@kariverification14.onmicrosoft.com";
+
+			await service.SendMailAsync(to, subject, text);
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("取得")]
+		public void 予定を取得する() {
+			var user = "root@kariverification14.onmicrosoft.com";
+			var pass = "!QAZ2wsx";
+			var service = new ExchangeOnlineManager(user, pass);
+
+			// 開始時刻と終了時刻の値、および取得する予定の数を初期化します。
+			var startDate = DateTime.Now;
+			var endDate = startDate.AddDays(30);
+
+			var appointments = service.FindAppointments(startDate, endDate);
+
+			var sb = new StringBuilder();
+
+			foreach (var a in appointments) {
+				sb.AppendLine($"{a.Start:yyyy/MM/dd(ddd) HH:mm} ~ {a.End:yyyy/MM/dd(ddd) HH:mm} {a.Subject}");
+			}
+
+			var subject = $"[{user}] {startDate:yyyy/MM/dd(ddd)} ~ {endDate:yyyy/MM/dd(ddd)} の予定";
+			var text = sb.ToString();
+			var to = $"{_username};{user};";
 
 			service.SendMail(to, subject, text);
 		}
@@ -34,26 +78,28 @@ namespace UnitTestExchangeManager {
 		[TestMethod]
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("取得")]
-		public void 予定を取得する() {
-			var service = new ExchangeOnlineManager(_username, _password);
+		public async Task 非同期で予定を取得する() {
+			var user = "root@kariverification14.onmicrosoft.com";
+			var pass = "!QAZ2wsx";
+			var service = new ExchangeOnlineManager(user, pass);
 
 			// 開始時刻と終了時刻の値、および取得する予定の数を初期化します。
 			var startDate = DateTime.Now;
 			var endDate = startDate.AddDays(30);
-			var maxItemsReturned = 5;
 
-			var appointments = service.FindAppointments(startDate, endDate, maxItemsReturned);
+			var appointments = await service.FindAppointmentsAsync(startDate, endDate);
 
-			Debug.WriteLine("\nThe first " + maxItemsReturned + " appointments on your calendar from " + startDate.Date.ToShortDateString() +
-							  " to " + endDate.Date.ToShortDateString() + " are: \n");
+			var sb = new StringBuilder();
 
 			foreach (var a in appointments) {
-				Debug.Write("Subject: " + a.Subject.ToString() + " ");
-				Debug.Write("Start: " + a.Start.ToString() + " ");
-				Debug.WriteLine("End: " + a.End.ToString());
+				sb.AppendLine($"{a.Start:yyyy/MM/dd(ddd) HH:mm} ~ {a.End:yyyy/MM/dd(ddd) HH:mm} {a.Subject}");
 			}
 
-			Assert.IsTrue(true);
+			var subject = $"[{user}] {startDate:yyyy/MM/dd(ddd)} ~ {endDate:yyyy/MM/dd(ddd)} の予定";
+			var text = sb.ToString();
+			var to = $"{_username};{user};";
+
+			await service.SendMailAsync(to, subject, text);
 		}
 
 		[TestMethod]
@@ -65,46 +111,154 @@ namespace UnitTestExchangeManager {
 			var meetingDuration = 60;
 
 			// 出席者のコレクションを作成します。 
-			var attendees = new List<AttendeeInfo> {
-				{ "root@kariverification14.onmicrosoft.com", MeetingAttendeeType.Organizer },		// 主催者
-				{ "ishikawm@kariverification14.onmicrosoft.com", MeetingAttendeeType.Required },	// 必須
-				{ "conference_f29_01@kariverification14.onmicrosoft.com", MeetingAttendeeType.Room },	// 会議室
+			var attendees = new List<Ews.AttendeeInfo> {
+				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
+				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
+				//{ "karikomi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
+				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
+				{ "conference_f29_01@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
+				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 			};
 
-			var now = DateTime.Now;
-			var startTime = now.AddDays(1);
-			var endTime = now.AddDays(2);
+			var date = new DateTime(2017, 04, 17);
+			var startTime = date;
+			var endTime = date.AddDays(4) - new TimeSpan(1);
 
-			var goodSuggestionThreshold = 49;
-			var maximumNonWorkHoursSuggestionsPerDay = 0;
-			var maximumSuggestionsPerDay = 2;
+			var results = service.GetUserAvailability(attendees, startTime, endTime, meetingDuration: meetingDuration);
 
-			var results = service.GetUserAvailability(attendees, startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
+			var sb = new StringBuilder();
 
 			// 提案された会議時間を表示します。
-			Debug.WriteLine($"Availability for {attendees[0].SmtpAddress} and {attendees[1].SmtpAddress}");
+			var str = attendees.Select(a => $"\t{a.SmtpAddress}").Join("\n");
+			sb.AppendLine($"アドレス :\n{str}").AppendLine();
+
+			sb.AppendLine("--------------------------------------------------------------------------------");
 
 			foreach (var suggestion in results.Suggestions) {
-				Debug.WriteLine($"Suggested date: {suggestion.Date.ToShortDateString()}\n");
-				Debug.WriteLine($"Suggested meeting times:\n");
+				sb.AppendLine($"提案日: {suggestion.Date:d}");
+				sb.AppendLine($"推奨される会議時間:");
 				foreach (var ts in suggestion.TimeSuggestions) {
 					var tim = ts.MeetingTime;
-					Debug.WriteLine($"\t{tim.ToShortTimeString()} - {tim.AddMinutes(meetingDuration).ToShortTimeString()}\n");
+					sb.AppendLine($"\t{tim:t} ~ {tim.AddMinutes(meetingDuration):t}");
 				}
 
-				int i = 0;
+				sb.AppendLine();
+			}
 
-				// 空き時間を表示します。
-				foreach (var availability in results.AttendeesAvailability) {
-					Debug.WriteLine($"Availability information for {attendees[i].SmtpAddress}:\n");
+			sb.AppendLine();
 
-					foreach (var calEvent in availability.CalendarEvents) {
-						Debug.WriteLine($"\tBusy from {calEvent.StartTime} to {calEvent.EndTime} \n");
+			var infos = attendees.Zip(results.AttendeesAvailability, (at, av) => new {
+				Attendee = at,
+				Availability = av,
+			});
+
+			infos.ForEach(info => {
+				sb.AppendLine($"[{info.Attendee.SmtpAddress}]:");
+
+				// 出席者のカレンダーイベントのコレクションを取得します。
+				foreach (var ev in info.Availability.CalendarEvents) {
+					sb.AppendLine($"\t{ev.StartTime:yyyy/MM/dd(ddd) HH:mm} ~ {ev.EndTime:yyyy/MM/dd(ddd) HH:mm} [{ev.FreeBusyStatus}] : {ev.Details?.GetPropertiesString()}");
+				}
+
+				sb.AppendLine();
+
+				if (info.Availability.MergedFreeBusyStatus?.Any() ?? false) {
+					// 出席者の空き/会議中状態を結合したコレクションを取得します。
+					foreach (var fb in info.Availability.MergedFreeBusyStatus) {
+						sb.AppendLine($"\tStatus {fb}");
 					}
 
-					i++;
+					sb.AppendLine();
 				}
+			});
+
+			sb.AppendLine("--------------------------------------------------------------------------------");
+
+			var user = "root@kariverification14.onmicrosoft.com";
+			var subject = $"{startTime:yyyy/MM/dd(ddd)} ~ {endTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
+			var text = sb.ToString();
+			var to = $"{_username};{user};";
+
+			service.SendMail(to, subject, text);
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("取得")]
+		public async Task 非同期で空き時間を取得する() {
+			var service = new ExchangeOnlineManager(_username, _password);
+
+			var meetingDuration = 60;
+
+			// 出席者のコレクションを作成します。 
+			var attendees = new List<Ews.AttendeeInfo> {
+				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
+				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
+				{ "karikomi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
+				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
+				{ "conference_f29_01@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
+				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
+			};
+
+			var date = new DateTime(2017, 04, 17);
+			var startTime = date;
+			var endTime = date.AddDays(4);
+			var lastTime = endTime - new TimeSpan(1);
+
+			var results = await service.GetUserAvailabilityAsync(attendees, startTime, endTime, meetingDuration: meetingDuration);
+
+			var sb = new StringBuilder();
+
+			// 提案された会議時間を表示します。
+			var str = attendees.Select(a => $"\t{a.SmtpAddress}").Join("\n");
+			sb.AppendLine($"アドレス :\n{str}").AppendLine();
+
+			sb.AppendLine("--------------------------------------------------------------------------------");
+
+			foreach (var suggestion in results.Suggestions) {
+				sb.AppendLine($"提案日: {suggestion.Date:yyyy/MM/dd(ddd)}");
+				sb.AppendLine($"推奨される会議時間:");
+				foreach (var ts in suggestion.TimeSuggestions) {
+					var tim = ts.MeetingTime;
+					sb.AppendLine($"\t{tim:t} ~ {tim.AddMinutes(meetingDuration):t}");
+				}
+
+				sb.AppendLine();
 			}
+
+			var infos = attendees.Zip(results.AttendeesAvailability, (at, av) => new {
+				Attendee = at,
+				Availability = av,
+			});
+
+			infos.ForEach(info => {
+				sb.AppendLine($"[{info.Attendee.SmtpAddress}]:");
+
+				// 出席者のカレンダーイベントのコレクションを取得します。
+				foreach (var ev in info.Availability.CalendarEvents) {
+					sb.AppendLine($"\t{ev.StartTime:yyyy/MM/dd(ddd) HH:mm} ~ {ev.EndTime:yyyy/MM/dd(ddd) HH:mm} [{ev.FreeBusyStatus}] : {ev.Details?.GetPropertiesString()}");
+				}
+
+				sb.AppendLine();
+
+				if (info.Availability.MergedFreeBusyStatus?.Any() ?? false) {
+					// 出席者の空き/会議中状態を結合したコレクションを取得します。
+					foreach (var fb in info.Availability.MergedFreeBusyStatus) {
+						sb.AppendLine($"\tStatus {fb}");
+					}
+
+					sb.AppendLine();
+				}
+			});
+
+			sb.AppendLine("--------------------------------------------------------------------------------");
+
+			var user = "root@kariverification14.onmicrosoft.com";
+			var subject = $"{startTime:yyyy/MM/dd(ddd)} ~ {lastTime:yyyy/MM/dd(ddd)} の推奨される会議時間 (非同期処理で取得しました)";
+			var text = sb.ToString();
+			var to = $"{_username};{user};";
+
+			await service.SendMailAsync(to, subject, text);
 		}
 
 		#endregion
