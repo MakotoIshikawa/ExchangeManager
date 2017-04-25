@@ -34,7 +34,7 @@ namespace ExchangeManager {
 
 		private static Ews.TimeWindow CreateTimeWindow(DateTime startDate, DateTime endDate) {
 			var startTime = startDate.Date;
-			var endTime = endDate.Date.AddDays(1.0) - new TimeSpan(1);
+			var endTime = endDate.Date.AddDays(1.0);
 			return new Ews.TimeWindow(startTime, endTime);
 		}
 
@@ -108,6 +108,16 @@ namespace ExchangeManager {
 			get { return this.DetailedSuggestionsWindow.EndTime; }
 			set { this.DetailedSuggestionsWindow.EndTime = value; }
 		}
+
+		/// <summary>
+		/// 期間の最後の日時を取得します。
+		/// </summary>
+		public DateTime LastTime => this.EndTime - new TimeSpan(1);
+
+		/// <summary>
+		/// 期間を取得します。
+		/// </summary>
+		public TimeSpan Duration => this.EndTime - this.StartTime;
 
 		/// <summary>
 		/// GetUserAvailability メソッドによって返されたデータに基づいて変更される会議のグローバルオブジェクトIDを取得または設定します。
@@ -241,15 +251,11 @@ namespace ExchangeManager {
 		/// <summary>
 		/// 推奨会議時間のコレクションを取得します。
 		/// </summary>
+		/// <param name="isWorkTime">推奨時間が勤務時間内かどうかを指定します。</param>
 		/// <returns>推奨会議時間のコレクションを返します。</returns>
-		public Dictionary<DateTime, IEnumerable<Ews.TimeWindow>> GetSuggestions() {
+		public Dictionary<DateTime, IEnumerable<Ews.TimeWindow>> GetSuggestions(bool isWorkTime = true) {
 			var suggestions = this.GetUserAvailability()?.Suggestions;
-			return suggestions?.ToDictionary(s => s.Date, s => (
-				from t in s.TimeSuggestions
-				let start = t.MeetingTime
-				let end = t.MeetingTime.AddMinutes(this.MeetingDuration)
-				select new Ews.TimeWindow(start, end)
-			));
+			return ToDictionary(suggestions, isWorkTime);
 		}
 
 		/// <summary>
@@ -257,12 +263,19 @@ namespace ExchangeManager {
 		/// 推奨会議時間のコレクションを取得します。
 		/// </summary>
 		/// <returns>推奨会議時間のコレクションを返します。</returns>
-		public async Task<Dictionary<DateTime, IEnumerable<Ews.TimeWindow>>> GetSuggestionsAsync() {
+		public async Task<Dictionary<DateTime, IEnumerable<Ews.TimeWindow>>> GetSuggestionsAsync(bool isWorkTime = true) {
 			var suggestions = (await this.GetUserAvailabilityAsync())?.Suggestions;
+			return ToDictionary(suggestions, isWorkTime);
+		}
+
+		private Dictionary<DateTime, IEnumerable<Ews.TimeWindow>> ToDictionary(IEnumerable<Ews.Suggestion> suggestions, bool isWorkTime) {
 			return suggestions?.ToDictionary(s => s.Date, s => (
-				from t in s.TimeSuggestions
+				from t in isWorkTime
+					? s.TimeSuggestions.Where(t => t.IsWorkTime)
+					: s.TimeSuggestions
 				let start = t.MeetingTime
 				let end = t.MeetingTime.AddMinutes(this.MeetingDuration)
+				orderby t.MeetingTime
 				select new Ews.TimeWindow(start, end)
 			));
 		}

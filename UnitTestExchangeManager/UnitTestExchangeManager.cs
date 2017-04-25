@@ -108,21 +108,19 @@ namespace UnitTestExchangeManager {
 			var attendees = new List<Ews.AttendeeInfo> {
 				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
 				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
-				//{ "karikomi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
 				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
 				{ "conference_f29_01@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 			};
 
-			var date = new DateTime(2017, 04, 24);
-			var start = date;
-			var end = date.AddDays(3);
+			var start = new DateTime(2017, 04, 24);
+			var end = new DateTime(2017, 04, 28);
 
 			var service = new ExchangeOnlineManager(_username, _password);
 			var sc = new ExchangeScheduler(service, start, end, attendees) {
 				GoodSuggestionThreshold = 49,
-				MaximumNonWorkHoursSuggestionsPerDay = 0,
-				MaximumSuggestionsPerDay = 2,
+				MaximumNonWorkHoursSuggestionsPerDay = 8,
+				MaximumSuggestionsPerDay = 8,
 				MeetingDuration = 60,
 				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
 				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
@@ -148,8 +146,6 @@ namespace UnitTestExchangeManager {
 				sb.AppendLine();
 			}
 
-			sb.AppendLine();
-
 			var availabilities = sc.GetUserAvailabilities();
 
 			availabilities.ForEach(info => {
@@ -166,7 +162,7 @@ namespace UnitTestExchangeManager {
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
 			var user = "root@kariverification14.onmicrosoft.com";
-			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.EndTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
+			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.LastTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
 
@@ -187,15 +183,14 @@ namespace UnitTestExchangeManager {
 				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 			};
 
-			var date = new DateTime(2017, 04, 24);
-			var start = date;
-			var end = date.AddDays(3);
+			var start = new DateTime(2017, 04, 24);
+			var end = new DateTime(2017, 04, 28);
 
 			var service = new ExchangeOnlineManager(_username, _password);
 			var sc = new ExchangeScheduler(service, start, end, attendees) {
 				GoodSuggestionThreshold = 49,
-				MaximumNonWorkHoursSuggestionsPerDay = 0,
-				MaximumSuggestionsPerDay = 2,
+				MaximumNonWorkHoursSuggestionsPerDay = 8,
+				MaximumSuggestionsPerDay = 8,
 				MeetingDuration = 60,
 				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
 				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
@@ -221,8 +216,6 @@ namespace UnitTestExchangeManager {
 				sb.AppendLine();
 			}
 
-			sb.AppendLine();
-
 			var availabilities = await sc.GetUserAvailabilitiesAsync();
 
 			availabilities.ForEach(info => {
@@ -239,7 +232,7 @@ namespace UnitTestExchangeManager {
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
 			var user = "root@kariverification14.onmicrosoft.com";
-			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.EndTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
+			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.LastTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
 
