@@ -106,8 +106,25 @@ namespace ExchangeManager.Extensions {
 		public static Ews.GetUserAvailabilityResults GetUserAvailability(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60) {
 			var detailedSuggestionsWindow = new Ews.TimeWindow(startTime, endTime);
 
+			return @this.GetUserAvailability(attendees, detailedSuggestionsWindow, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
+		}
+
+		/// <summary>
+		/// 空き時間を取得します。
+		/// </summary>
+		/// <param name="this">ExchangeService</param>
+		/// <param name="attendees">出席者</param>
+		/// <param name="detailedSuggestionsWindow">推奨される会議時間に関する詳細情報が返される時間ウィンドウ。</param>
+		/// <param name="goodSuggestionThreshold">推奨される会議時間としての資格を得るために、その期間に期間を開いておく必要がある出席者の割合を取得または設定します。1～49でなければなりません。デフォルト値は25です。</param>
+		/// <param name="maximumNonWorkHoursSuggestionsPerDay">1日あたりの通常の営業時間外に推奨される会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は0です。</param>
+		/// <param name="maximumSuggestionsPerDay">1日に返される推奨会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は10です。</param>
+		/// <param name="meetingDuration">提案を取得する会議の所要時間を分単位で取得または設定します。30～1440でなければなりません。既定値は60です。</param>
+		/// <returns>空き時間の情報を返します。</returns>
+		public static Ews.GetUserAvailabilityResults GetUserAvailability(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, Ews.TimeWindow detailedSuggestionsWindow, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60) {
 			// 空き時間情報および推奨される会議時間を要求するオプションを指定します。
 			var availabilityOptions = new Ews.AvailabilityOptions {
+				DetailedSuggestionsWindow = detailedSuggestionsWindow,
+
 				GoodSuggestionThreshold = goodSuggestionThreshold.WithinRange(1, 49),
 				MaximumNonWorkHoursSuggestionsPerDay = maximumNonWorkHoursSuggestionsPerDay.WithinRange(0, 48),
 				MaximumSuggestionsPerDay = maximumSuggestionsPerDay.WithinRange(0, 48),
@@ -116,18 +133,15 @@ namespace ExchangeManager.Extensions {
 				MeetingDuration = meetingDuration.WithinRange(30, 1440),
 
 				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
-				DetailedSuggestionsWindow = detailedSuggestionsWindow,
 				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
 			};
 
 			// 空き時間情報と推奨される会議時間のセットを返します。
 			// このメソッドの結果、EWSへの GetUserAvailabilityRequest が呼び出されます。
-			var results = @this.GetUserAvailability(attendees, detailedSuggestionsWindow,
-				Ews.AvailabilityData.FreeBusyAndSuggestions, availabilityOptions);
+			var results = @this.GetUserAvailability(attendees, availabilityOptions);
 
 			return results;
 		}
-
 
 		/// <summary>
 		/// 空き時間を取得します。[非同期]
@@ -143,6 +157,39 @@ namespace ExchangeManager.Extensions {
 		/// <returns>空き時間の情報を返します。</returns>
 		public static async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60)
 			=> await Task.Run(() => @this.GetUserAvailability(attendees, startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration));
+
+		#endregion
+
+		#region GetUserAvailability (オーバーロード)
+
+		/// <summary>
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="this">ExchangeService</param>
+		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		public static Ews.GetUserAvailabilityResults GetUserAvailability(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
+			=> @this.GetUserAvailability(attendees, options.DetailedSuggestionsWindow, requestedData, options);
+
+		#endregion
+
+		#region GetUserAvailabilityAsync
+
+		/// <summary>
+		/// 非同期で
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="this">ExchangeService</param>
+		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		public static async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
+			=> await Task.Run(() => @this.GetUserAvailability(attendees, options, requestedData));
 
 		#endregion
 

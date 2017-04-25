@@ -95,6 +95,27 @@ namespace ExchangeManager.Interface {
 		/// <returns>空き時間の情報を返します。</returns>
 		Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60);
 
+		/// <summary>
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
+
+		/// <summary>
+		/// 非同期で
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
+
 		#endregion
 
 		#endregion
