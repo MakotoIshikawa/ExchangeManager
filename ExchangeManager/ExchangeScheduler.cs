@@ -21,9 +21,32 @@ namespace ExchangeManager {
 
 		#region コンストラクタ
 
-		public ExchangeScheduler(IExchangeManager manager, DateTime startTime, DateTime endTime, IEnumerable<Ews.AttendeeInfo> attendees) {
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="manager">Exchange を管理するオブジェクト</param>
+		/// <param name="startDate">開始日を指定します。</param>
+		/// <param name="endDate">終了日を指定します。</param>
+		/// <param name="attendees">出席者のコレクションを指定します。</param>
+		public ExchangeScheduler(IExchangeManager manager, DateTime startDate, DateTime endDate, IEnumerable<Ews.AttendeeInfo> attendees)
+			: this(manager, CreateTimeWindow(startDate, endDate), attendees) {
+		}
+
+		private static Ews.TimeWindow CreateTimeWindow(DateTime startDate, DateTime endDate) {
+			var startTime = startDate.Date;
+			var endTime = endDate.Date.AddDays(1.0) - new TimeSpan(1);
+			return new Ews.TimeWindow(startTime, endTime);
+		}
+
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="manager">Exchange を管理するオブジェクト</param>
+		/// <param name="detailedSuggestionsWindow">推奨される会議時間に関する詳細情報が返される時間ウィンドウ</param>
+		/// <param name="attendees">出席者のコレクションを指定します。</param>
+		public ExchangeScheduler(IExchangeManager manager, Ews.TimeWindow detailedSuggestionsWindow, IEnumerable<Ews.AttendeeInfo> attendees) {
 			this.Manager = manager;
-			this.DetailedSuggestionsWindow = new Ews.TimeWindow(startTime, endTime);
+			this.DetailedSuggestionsWindow = detailedSuggestionsWindow;
 			this.Attendees = attendees;
 		}
 
@@ -101,7 +124,7 @@ namespace ExchangeManager {
 		/// </summary>
 		public int GoodSuggestionThreshold {
 			get { return this._options.GoodSuggestionThreshold; }
-			set { this._options.GoodSuggestionThreshold = value; }
+			set { this._options.GoodSuggestionThreshold = value.WithinRange(1, 49); }
 		}
 
 		/// <summary>
@@ -111,7 +134,7 @@ namespace ExchangeManager {
 		/// </summary>
 		public int MaximumNonWorkHoursSuggestionsPerDay {
 			get { return this._options.MaximumNonWorkHoursSuggestionsPerDay; }
-			set { this._options.MaximumNonWorkHoursSuggestionsPerDay = value; }
+			set { this._options.MaximumNonWorkHoursSuggestionsPerDay = value.WithinRange(0, 48); }
 		}
 
 		/// <summary>
@@ -121,7 +144,7 @@ namespace ExchangeManager {
 		/// </summary>
 		public int MaximumSuggestionsPerDay {
 			get { return this._options.MaximumSuggestionsPerDay; }
-			set { this._options.MaximumSuggestionsPerDay = value; }
+			set { this._options.MaximumSuggestionsPerDay = value.WithinRange(0, 48); }
 		}
 
 		/// <summary>
@@ -131,7 +154,7 @@ namespace ExchangeManager {
 		/// </summary>
 		public int MeetingDuration {
 			get { return this._options.MeetingDuration; }
-			set { this._options.MeetingDuration = value; }
+			set { this._options.MeetingDuration = value.WithinRange(30, 1440); }
 		}
 
 		/// <summary>
@@ -141,7 +164,7 @@ namespace ExchangeManager {
 		/// </summary>
 		public int MergedFreeBusyInterval {
 			get { return this._options.MergedFreeBusyInterval; }
-			set { this._options.MergedFreeBusyInterval = value; }
+			set { this._options.MergedFreeBusyInterval = value.WithinRange(5, 1440); }
 		}
 
 		/// <summary>
@@ -195,63 +218,63 @@ namespace ExchangeManager {
 		#region 空き時間確認
 
 		/// <summary>
-		/// 空き時間を取得します。
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
 		/// </summary>
-		/// <param name="startTime">開始時間</param>
-		/// <param name="endTime">終了時間</param>
-		/// <param name="goodSuggestionThreshold">推奨される会議時間としての資格を得るために、その期間に期間を開いておく必要がある出席者の割合を取得または設定します。1～49でなければなりません。デフォルト値は25です。</param>
-		/// <param name="maximumNonWorkHoursSuggestionsPerDay">1日あたりの通常の営業時間外に推奨される会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は0です。</param>
-		/// <param name="maximumSuggestionsPerDay">1日に返される推奨会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は10です。</param>
-		/// <param name="meetingDuration">提案を取得する会議の所要時間を分単位で取得または設定します。30～1440でなければなりません。既定値は60です。</param>
-		/// <returns>空き時間の情報を返します。</returns>
-		protected virtual Ews.GetUserAvailabilityResults GetUserAvailability(DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60)
-			=> this.Manager.GetUserAvailability(this.Attendees, startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
-
-		protected virtual async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60)
-			=> await this.Manager.GetUserAvailabilityAsync(this.Attendees, startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
-
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		protected virtual Ews.GetUserAvailabilityResults GetUserAvailability()
 			=> this.Manager.GetUserAvailability(this.Attendees, this._options, this.RequestedData);
 
+		/// <summary>
+		/// 非同期で
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		protected virtual async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync()
 			=> await this.Manager.GetUserAvailabilityAsync(this.Attendees, this._options, this.RequestedData);
 
 		#endregion
 
-		/// <summary>
-		/// 指定した期間の推奨会議時間のコレクションを取得します。
-		/// </summary>
-		/// <param name="startTime">開始時間</param>
-		/// <param name="endTime">終了時間</param>
-		/// <param name="goodSuggestionThreshold">推奨される会議時間としての資格を得るために、その期間に期間を開いておく必要がある出席者の割合を取得または設定します。1～49でなければなりません。デフォルト値は25です。</param>
-		/// <param name="maximumNonWorkHoursSuggestionsPerDay">1日あたりの通常の営業時間外に推奨される会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は0です。</param>
-		/// <param name="maximumSuggestionsPerDay">1日に返される推奨会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は10です。</param>
-		/// <param name="meetingDuration">提案を取得する会議の所要時間を分単位で取得または設定します。30～1440でなければなりません。既定値は60です。</param>
-		/// <returns>推奨会議時間のコレクションを返します。</returns>
-		public Collection<Ews.Suggestion> GetSuggestions(DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60)
-			=> this.GetUserAvailability(startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration)?.Suggestions;
+		#region 推奨会議時間取得
 
-		public Collection<Ews.Suggestion> GetSuggestions()
-			=> this.GetUserAvailability()?.Suggestions;
+		/// <summary>
+		/// 推奨会議時間のコレクションを取得します。
+		/// </summary>
+		/// <returns>推奨会議時間のコレクションを返します。</returns>
+		public Dictionary<DateTime, IEnumerable<Ews.TimeWindow>> GetSuggestions() {
+			var suggestions = this.GetUserAvailability()?.Suggestions;
+			return suggestions?.ToDictionary(s => s.Date, s => (
+				from t in s.TimeSuggestions
+				let start = t.MeetingTime
+				let end = t.MeetingTime.AddMinutes(this.MeetingDuration)
+				select new Ews.TimeWindow(start, end)
+			));
+		}
+
+		/// <summary>
+		/// 非同期で
+		/// 推奨会議時間のコレクションを取得します。
+		/// </summary>
+		/// <returns>推奨会議時間のコレクションを返します。</returns>
+		public async Task<Dictionary<DateTime, IEnumerable<Ews.TimeWindow>>> GetSuggestionsAsync() {
+			var suggestions = (await this.GetUserAvailabilityAsync())?.Suggestions;
+			return suggestions?.ToDictionary(s => s.Date, s => (
+				from t in s.TimeSuggestions
+				let start = t.MeetingTime
+				let end = t.MeetingTime.AddMinutes(this.MeetingDuration)
+				select new Ews.TimeWindow(start, end)
+			));
+		}
+
+		#endregion
+
+		#region 出席者カレンダーイベント取得
 
 		/// <summary>
 		/// 出席者のカレンダーイベントのコレクションを取得します。
 		/// </summary>
-		/// <param name="startTime">開始時間</param>
-		/// <param name="endTime">終了時間</param>
-		/// <param name="goodSuggestionThreshold">推奨される会議時間としての資格を得るために、その期間に期間を開いておく必要がある出席者の割合を取得または設定します。1～49でなければなりません。デフォルト値は25です。</param>
-		/// <param name="maximumNonWorkHoursSuggestionsPerDay">1日あたりの通常の営業時間外に推奨される会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は0です。</param>
-		/// <param name="maximumSuggestionsPerDay">1日に返される推奨会議時間の数を取得または設定します。0～48の間でなければなりません。デフォルト値は10です。</param>
-		/// <param name="meetingDuration">提案を取得する会議の所要時間を分単位で取得または設定します。30～1440でなければなりません。既定値は60です。</param>
-		/// <returns></returns>
-		public Dictionary<string, Collection<Ews.CalendarEvent>> GetUserAvailabilities(DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60) {
-			var results = GetUserAvailability(startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
-			return this.Attendees.Zip(results.AttendeesAvailability, (at, av) => new {
-				Attendee = at,
-				Availability = av,
-			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents);
-		}
-
+		/// <returns>出席者のカレンダーイベントのコレクションを返します。</returns>
 		public Dictionary<string, Collection<Ews.CalendarEvent>> GetUserAvailabilities() {
 			var results = this.GetUserAvailability();
 			return this.Attendees.Zip(results.AttendeesAvailability, (at, av) => new {
@@ -260,13 +283,20 @@ namespace ExchangeManager {
 			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents);
 		}
 
-		public virtual async Task<Dictionary<string, Collection<Ews.CalendarEvent>>> GetUserAvailabilitiesAsync() {
+		/// <summary>
+		/// 非同期で
+		/// 出席者のカレンダーイベントのコレクションを取得します。
+		/// </summary>
+		/// <returns>出席者のカレンダーイベントのコレクションを返します。</returns>
+		public async Task<Dictionary<string, Collection<Ews.CalendarEvent>>> GetUserAvailabilitiesAsync() {
 			var results = await this.GetUserAvailabilityAsync();
 			return this.Attendees.Zip(results.AttendeesAvailability, (at, av) => new {
 				Attendee = at,
 				Availability = av,
 			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents);
 		}
+
+		#endregion
 
 		#endregion
 	}

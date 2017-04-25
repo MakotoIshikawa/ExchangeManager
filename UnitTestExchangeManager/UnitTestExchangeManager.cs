@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,14 +8,15 @@ using ExchangeManager.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ews = Microsoft.Exchange.WebServices.Data;
 using ExtensionsLibrary.Extensions;
+using UnitTestExchangeManager.Properties;
 
 namespace UnitTestExchangeManager {
 	[TestClass]
 	public class UnitTestExchangeManager {
 		#region フィールド
 
-		private static string _username = @"ishikawm@kariverification14.onmicrosoft.com";
-		private static string _password = @"Ishikawam!";
+		private static string _username = Settings.Default.UserName;
+		private static string _password = Settings.Default.Password;
 
 		#endregion
 
@@ -52,9 +52,7 @@ namespace UnitTestExchangeManager {
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("取得")]
 		public void 予定を取得する() {
-			var user = "root@kariverification14.onmicrosoft.com";
-			var pass = "!QAZ2wsx";
-			var service = new ExchangeOnlineManager(user, pass);
+			var service = new ExchangeOnlineManager(_username, _password);
 
 			// 開始時刻と終了時刻の値、および取得する予定の数を初期化します。
 			var startDate = DateTime.Now;
@@ -68,7 +66,8 @@ namespace UnitTestExchangeManager {
 				sb.AppendLine($"{a.Start:yyyy/MM/dd(ddd) HH:mm} ~ {a.End:yyyy/MM/dd(ddd) HH:mm} {a.Subject}");
 			}
 
-			var subject = $"[{user}] {startDate:yyyy/MM/dd(ddd)} ~ {endDate:yyyy/MM/dd(ddd)} の予定";
+			var user = "root@kariverification14.onmicrosoft.com";
+			var subject = $"[{_username}] {startDate:yyyy/MM/dd(ddd)} ~ {endDate:yyyy/MM/dd(ddd)} の予定";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
 
@@ -79,9 +78,7 @@ namespace UnitTestExchangeManager {
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("取得")]
 		public async Task 非同期で予定を取得する() {
-			var user = "root@kariverification14.onmicrosoft.com";
-			var pass = "!QAZ2wsx";
-			var service = new ExchangeOnlineManager(user, pass);
+			var service = new ExchangeOnlineManager(_username, _password);
 
 			// 開始時刻と終了時刻の値、および取得する予定の数を初期化します。
 			var startDate = DateTime.Now;
@@ -95,7 +92,8 @@ namespace UnitTestExchangeManager {
 				sb.AppendLine($"{a.Start:yyyy/MM/dd(ddd) HH:mm} ~ {a.End:yyyy/MM/dd(ddd) HH:mm} {a.Subject}");
 			}
 
-			var subject = $"[{user}] {startDate:yyyy/MM/dd(ddd)} ~ {endDate:yyyy/MM/dd(ddd)} の予定";
+			var user = "root@kariverification14.onmicrosoft.com";
+			var subject = $"[{_username}] {startDate:yyyy/MM/dd(ddd)} ~ {endDate:yyyy/MM/dd(ddd)} の予定";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
 
@@ -116,14 +114,19 @@ namespace UnitTestExchangeManager {
 				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 			};
 
-			var date = new DateTime(2017, 04, 17);
-			var startTime = date;
-			var endTime = date.AddDays(4) - new TimeSpan(1);
+			var date = new DateTime(2017, 04, 24);
+			var start = date;
+			var end = date.AddDays(3);
 
 			var service = new ExchangeOnlineManager(_username, _password);
-			var sc = new ExchangeScheduler(service, startTime, endTime, attendees);
-
-			var meetingDuration = 60;
+			var sc = new ExchangeScheduler(service, start, end, attendees) {
+				GoodSuggestionThreshold = 49,
+				MaximumNonWorkHoursSuggestionsPerDay = 0,
+				MaximumSuggestionsPerDay = 2,
+				MeetingDuration = 60,
+				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
+				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
+			};
 
 			var suggestions = sc.GetSuggestions();
 
@@ -135,12 +138,11 @@ namespace UnitTestExchangeManager {
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
-			foreach (var suggestion in suggestions) {
-				sb.AppendLine($"提案日: {suggestion.Date:d}");
+			foreach (var s in suggestions) {
+				sb.AppendLine($"提案日: {s.Key:d}");
 				sb.AppendLine($"推奨される会議時間:");
-				foreach (var ts in suggestion.TimeSuggestions) {
-					var tim = ts.MeetingTime;
-					sb.AppendLine($"\t{tim:t} ~ {tim.AddMinutes(meetingDuration):t}");
+				foreach (var t in s.Value) {
+					sb.AppendLine($"\t{t.StartTime:t} ~ {t.EndTime:t}");
 				}
 
 				sb.AppendLine();
@@ -148,9 +150,9 @@ namespace UnitTestExchangeManager {
 
 			sb.AppendLine();
 
-			var infos = sc.GetUserAvailabilities();
+			var availabilities = sc.GetUserAvailabilities();
 
-			infos.ForEach(info => {
+			availabilities.ForEach(info => {
 				sb.AppendLine($"[{info.Key}]:");
 
 				// 出席者のカレンダーイベントのコレクションを取得します。
@@ -164,38 +166,42 @@ namespace UnitTestExchangeManager {
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
 			var user = "root@kariverification14.onmicrosoft.com";
-			var subject = $"{startTime:yyyy/MM/dd(ddd)} ~ {endTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
+			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.EndTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
 
 			service.SendMail(to, subject, text);
 		}
 
-
 		[TestMethod]
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("取得")]
 		public async Task 非同期で空き時間を取得する() {
-			var service = new ExchangeOnlineManager(_username, _password);
-
-			var meetingDuration = 60;
-
 			// 出席者のコレクションを作成します。 
 			var attendees = new List<Ews.AttendeeInfo> {
 				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
 				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
-				{ "karikomi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
+				//{ "karikomi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
 				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
 				{ "conference_f29_01@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 			};
 
-			var date = new DateTime(2017, 04, 17);
-			var startTime = date;
-			var endTime = date.AddDays(4);
-			var lastTime = endTime - new TimeSpan(1);
+			var date = new DateTime(2017, 04, 24);
+			var start = date;
+			var end = date.AddDays(3);
 
-			var results = await service.GetUserAvailabilityAsync(attendees, startTime, endTime, meetingDuration: meetingDuration);
+			var service = new ExchangeOnlineManager(_username, _password);
+			var sc = new ExchangeScheduler(service, start, end, attendees) {
+				GoodSuggestionThreshold = 49,
+				MaximumNonWorkHoursSuggestionsPerDay = 0,
+				MaximumSuggestionsPerDay = 2,
+				MeetingDuration = 60,
+				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
+				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
+			};
+
+			var suggestions = await sc.GetSuggestionsAsync();
 
 			var sb = new StringBuilder();
 
@@ -205,46 +211,35 @@ namespace UnitTestExchangeManager {
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
-			foreach (var suggestion in results.Suggestions) {
-				sb.AppendLine($"提案日: {suggestion.Date:yyyy/MM/dd(ddd)}");
+			foreach (var s in suggestions) {
+				sb.AppendLine($"提案日: {s.Key:d}");
 				sb.AppendLine($"推奨される会議時間:");
-				foreach (var ts in suggestion.TimeSuggestions) {
-					var tim = ts.MeetingTime;
-					sb.AppendLine($"\t{tim:t} ~ {tim.AddMinutes(meetingDuration):t}");
+				foreach (var t in s.Value) {
+					sb.AppendLine($"\t{t.StartTime:t} ~ {t.EndTime:t}");
 				}
 
 				sb.AppendLine();
 			}
 
-			var infos = attendees.Zip(results.AttendeesAvailability, (at, av) => new {
-				Attendee = at,
-				Availability = av,
-			});
+			sb.AppendLine();
 
-			infos.ForEach(info => {
-				sb.AppendLine($"[{info.Attendee.SmtpAddress}]:");
+			var availabilities = await sc.GetUserAvailabilitiesAsync();
+
+			availabilities.ForEach(info => {
+				sb.AppendLine($"[{info.Key}]:");
 
 				// 出席者のカレンダーイベントのコレクションを取得します。
-				foreach (var ev in info.Availability.CalendarEvents) {
+				foreach (var ev in info.Value) {
 					sb.AppendLine($"\t{ev.StartTime:yyyy/MM/dd(ddd) HH:mm} ~ {ev.EndTime:yyyy/MM/dd(ddd) HH:mm} [{ev.FreeBusyStatus}] : {ev.Details?.GetPropertiesString()}");
 				}
 
 				sb.AppendLine();
-
-				if (info.Availability.MergedFreeBusyStatus?.Any() ?? false) {
-					// 出席者の空き/会議中状態を結合したコレクションを取得します。
-					foreach (var fb in info.Availability.MergedFreeBusyStatus) {
-						sb.AppendLine($"\tStatus {fb}");
-					}
-
-					sb.AppendLine();
-				}
 			});
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
 			var user = "root@kariverification14.onmicrosoft.com";
-			var subject = $"{startTime:yyyy/MM/dd(ddd)} ~ {lastTime:yyyy/MM/dd(ddd)} の推奨される会議時間 (非同期処理で取得しました)";
+			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.EndTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
 
