@@ -12,8 +12,6 @@ namespace ExchangeManager.Primitives {
 	public abstract class ExchangeManagerBase : IExchangeManager {
 		#region フィールド
 
-		protected Ews.ExchangeService Service { get; set; }
-
 		#endregion
 
 		#region コンストラクタ
@@ -41,6 +39,11 @@ namespace ExchangeManager.Primitives {
 		/// パスワード
 		/// </summary>
 		public string Password { get; protected set; }
+
+		/// <summary>
+		/// ExchangeService
+		/// </summary>
+		protected Ews.ExchangeService Service { get; set; }
 
 		#endregion
 
@@ -115,6 +118,29 @@ namespace ExchangeManager.Primitives {
 
 		public virtual async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, DateTime startTime, DateTime endTime, int goodSuggestionThreshold = 25, int maximumNonWorkHoursSuggestionsPerDay = 0, int maximumSuggestionsPerDay = 10, int meetingDuration = 60)
 			=> await this.Service.GetUserAvailabilityAsync(attendees, startTime, endTime, goodSuggestionThreshold, maximumNonWorkHoursSuggestionsPerDay, maximumSuggestionsPerDay, meetingDuration);
+
+		/// <summary>
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		public virtual Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
+			=> this.Service.GetUserAvailability(attendees, options, requestedData);
+
+		/// <summary>
+		/// 非同期で
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		public virtual async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
+			=> await this.Service.GetUserAvailabilityAsync(attendees, options, requestedData);
 
 		#endregion
 

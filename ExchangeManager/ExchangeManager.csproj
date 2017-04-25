@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExchangeOnlineManager.cs" />
+    <Compile Include="ExchangeScheduler.cs" />
     <Compile Include="Extensions\AttendeeInfoExtension.cs" />
     <Compile Include="Extensions\ExchangeServiceExtension.cs" />
     <Compile Include="Interface\IExchangeManager.cs" />

@@ -106,10 +106,6 @@ namespace UnitTestExchangeManager {
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("取得")]
 		public void 空き時間を取得する() {
-			var service = new ExchangeOnlineManager(_username, _password);
-
-			var meetingDuration = 60;
-
 			// 出席者のコレクションを作成します。 
 			var attendees = new List<Ews.AttendeeInfo> {
 				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
@@ -124,7 +120,12 @@ namespace UnitTestExchangeManager {
 			var startTime = date;
 			var endTime = date.AddDays(4) - new TimeSpan(1);
 
-			var results = service.GetUserAvailability(attendees, startTime, endTime, meetingDuration: meetingDuration);
+			var service = new ExchangeOnlineManager(_username, _password);
+			var sc = new ExchangeScheduler(service, startTime, endTime, attendees);
+
+			var meetingDuration = 60;
+
+			var suggestions = sc.GetSuggestions();
 
 			var sb = new StringBuilder();
 
@@ -134,7 +135,7 @@ namespace UnitTestExchangeManager {
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
-			foreach (var suggestion in results.Suggestions) {
+			foreach (var suggestion in suggestions) {
 				sb.AppendLine($"提案日: {suggestion.Date:d}");
 				sb.AppendLine($"推奨される会議時間:");
 				foreach (var ts in suggestion.TimeSuggestions) {
@@ -147,29 +148,17 @@ namespace UnitTestExchangeManager {
 
 			sb.AppendLine();
 
-			var infos = attendees.Zip(results.AttendeesAvailability, (at, av) => new {
-				Attendee = at,
-				Availability = av,
-			});
+			var infos = sc.GetUserAvailabilities();
 
 			infos.ForEach(info => {
-				sb.AppendLine($"[{info.Attendee.SmtpAddress}]:");
+				sb.AppendLine($"[{info.Key}]:");
 
 				// 出席者のカレンダーイベントのコレクションを取得します。
-				foreach (var ev in info.Availability.CalendarEvents) {
+				foreach (var ev in info.Value) {
 					sb.AppendLine($"\t{ev.StartTime:yyyy/MM/dd(ddd) HH:mm} ~ {ev.EndTime:yyyy/MM/dd(ddd) HH:mm} [{ev.FreeBusyStatus}] : {ev.Details?.GetPropertiesString()}");
 				}
 
 				sb.AppendLine();
-
-				if (info.Availability.MergedFreeBusyStatus?.Any() ?? false) {
-					// 出席者の空き/会議中状態を結合したコレクションを取得します。
-					foreach (var fb in info.Availability.MergedFreeBusyStatus) {
-						sb.AppendLine($"\tStatus {fb}");
-					}
-
-					sb.AppendLine();
-				}
 			});
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
@@ -181,6 +170,7 @@ namespace UnitTestExchangeManager {
 
 			service.SendMail(to, subject, text);
 		}
+
 
 		[TestMethod]
 		[Owner(nameof(ExchangeOnlineManager))]
