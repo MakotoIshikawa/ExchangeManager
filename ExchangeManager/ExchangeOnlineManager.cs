@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ExchangeManager.Interface;
 using ExchangeManager.Primitives;
 using Microsoft.Exchange.WebServices.Data;
@@ -42,6 +43,8 @@ namespace ExchangeManager {
 		#endregion
 
 		#region プロパティ
+
+		public IEnumerable<EmailAddress> RoomLists => this.Service.GetRoomLists();
 
 		#endregion
 

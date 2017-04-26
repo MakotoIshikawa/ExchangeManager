@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ews = Microsoft.Exchange.WebServices.Data;
 using ExtensionsLibrary.Extensions;
 using UnitTestExchangeManager.Properties;
+using System.Diagnostics;
 
 namespace UnitTestExchangeManager {
 	[TestClass]
@@ -237,6 +238,24 @@ namespace UnitTestExchangeManager {
 			var to = $"{_username};{user};";
 
 			await service.SendMailAsync(to, subject, text);
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("取得")]
+		public void 会議室一覧を取得する() {
+			var service = new ExchangeOnlineManager(_username, _password);
+
+			// 組織内のすべてのルームリストを返します。
+			var myRoomLists = service.RoomLists;
+
+			var sb = new StringBuilder();
+
+			foreach (var address in myRoomLists) {
+				sb.AppendLine(address.GetPropertiesString());
+			}
+
+			Debug.WriteLine(sb.ToString());
 		}
 
 		#endregion
