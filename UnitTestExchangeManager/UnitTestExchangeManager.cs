@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExchangeManager;
 using ExchangeManager.Extensions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Ews = Microsoft.Exchange.WebServices.Data;
 using ExtensionsLibrary.Extensions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTestExchangeManager.Properties;
-using System.Diagnostics;
+using Ews = Microsoft.Exchange.WebServices.Data;
 
 namespace UnitTestExchangeManager {
 	[TestClass]
@@ -246,16 +246,72 @@ namespace UnitTestExchangeManager {
 		public void 会議室一覧を取得する() {
 			var service = new ExchangeOnlineManager(_username, _password);
 
-			// 組織内のすべてのルームリストを返します。
-			var myRoomLists = service.RoomLists;
-
 			var sb = new StringBuilder();
 
-			foreach (var address in myRoomLists) {
+			foreach (var address in service.GetRooms()) {
 				sb.AppendLine(address.GetPropertiesString());
 			}
 
 			Debug.WriteLine(sb.ToString());
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("取得")]
+		public async Task 非同期で会議室一覧を取得する() {
+			var service = new ExchangeOnlineManager(_username, _password);
+
+			var sb = new StringBuilder();
+
+			foreach (var address in await service.GetRoomsAsync()) {
+				sb.AppendLine(address.GetPropertiesString());
+			}
+
+			Debug.WriteLine(sb.ToString());
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("作成")]
+		public void 予定を作成する() {
+			var mng = new ExchangeOnlineManager(_username, _password);
+
+			var subject = "テニスレッスン";
+			var body = "今週はバックハンドに焦点を当てる。";
+			var start = new DateTime(2017, 5, 1, 10, 30, 0);
+			var end = start.AddHours(1);
+			var location = "テニスクラブ";
+			var reminderDueBy = DateTime.Now;
+
+			var appointment = mng.Save(subject, start, end, a => {
+				a.Body = body;
+				a.Location = location;
+				a.ReminderDueBy = reminderDueBy;
+			});
+
+			// 予定のアイテムIDを使用して予定が作成されたことを確認します。
+			var item = mng.Bind(appointment.Id.UniqueId, Ews.ItemSchema.Subject);
+
+			Debug.WriteLine($@"Appointment created: {item.Subject}");
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("作成")]
+		public async Task 非同期で予定を変更する() {
+			var mng = new ExchangeOnlineManager(_username, _password);
+
+			var uniqueId = "AAMkADgxMjVkZGFiLTI0NzAtNGZiZS1hZmFkLTY0ZTJjOGZlNmNkYwBGAAAAAACR5NF3YWTVSZG68BOtdbeGBwAJsLXPBlunQ6YENeQISOS/AAAAAAENAAAJsLXPBlunQ6YENeQISOS/AAAkvA9SAAA=";
+
+			var appointment = await mng.UpdateAsync(uniqueId, a => {
+				// 予定のプロパティを新しい件名、開始時刻、終了時刻で更新します。
+				a.Subject = $"{a.Subject} moved one hour later and to the day after {a.Start:yyyy/MM/dd(ddd)}!";
+				a.Start = a.Start.AddHours(25);
+				a.End = a.End.AddHours(25);
+			});
+
+			// 更新を確認します。
+			Debug.WriteLine($@"""{appointment.Subject}""");
 		}
 
 		#endregion

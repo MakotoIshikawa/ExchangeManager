@@ -43,7 +43,7 @@ namespace ExchangeManager.Primitives {
 		/// <summary>
 		/// ExchangeService
 		/// </summary>
-		protected Ews.ExchangeService Service { get; set; }
+		public Ews.ExchangeService Service { get; protected set; }
 
 		#endregion
 
