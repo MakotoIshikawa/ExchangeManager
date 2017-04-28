@@ -6,17 +6,25 @@ namespace ExchangeManager.Extensions {
 	/// AttendeeInfo を拡張するメソッドを提供します。
 	/// </summary>
 	public static partial class AttendeeInfoExtension {
+		#region メソッド
+
+		#region Add
+
 		/// <summary>
 		/// 末尾に AttendeeInfo のインスタンスを追加します。
 		/// </summary>
 		/// <param name="this"></param>
 		/// <param name="smtpAddress">SMTPアドレス</param>
 		/// <param name="attendeeType">会議出席者のタイプ</param>
-		public static void Add(this List<AttendeeInfo> @this, string smtpAddress, MeetingAttendeeType attendeeType) {
-			@this.Add(new AttendeeInfo() {
-				SmtpAddress = smtpAddress,
-				AttendeeType = attendeeType
-			});
-		}
+		/// <param name="excludeConflicts">この参加者が利用できない時間が返されるべきかどうかを示す値</param>
+		public static void Add(this List<AttendeeInfo> @this, string smtpAddress, MeetingAttendeeType attendeeType, bool excludeConflicts = false) => @this.Add(new AttendeeInfo() {
+			SmtpAddress = smtpAddress,
+			AttendeeType = attendeeType,
+			ExcludeConflicts = excludeConflicts,
+		});
+
+		#endregion
+
+		#endregion
 	}
 }

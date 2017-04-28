@@ -301,12 +301,12 @@ namespace ExchangeManager {
 		/// 出席者のカレンダーイベントのコレクションを取得します。
 		/// </summary>
 		/// <returns>出席者のカレンダーイベントのコレクションを返します。</returns>
-		public async Task<Dictionary<string, Collection<Ews.CalendarEvent>>> GetUserAvailabilitiesAsync() {
+		public async Task<Dictionary<string, List<Ews.CalendarEvent>>> GetUserAvailabilitiesAsync() {
 			var results = await this.GetUserAvailabilityAsync();
 			return this.Attendees.Zip(results.AttendeesAvailability, (at, av) => new {
 				Attendee = at,
 				Availability = av,
-			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents);
+			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents.ToList());
 		}
 
 		#endregion

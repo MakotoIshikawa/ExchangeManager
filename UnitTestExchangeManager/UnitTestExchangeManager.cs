@@ -178,14 +178,11 @@ namespace UnitTestExchangeManager {
 			var attendees = new List<Ews.AttendeeInfo> {
 				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
 				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
-				//{ "karikomi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
 				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
-				{ "conference_f29_01@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
-				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
 			};
 
-			var start = new DateTime(2017, 04, 24);
-			var end = new DateTime(2017, 04, 28);
+			var start = DateTime.Today;
+			var end = start.AddDays(7);
 
 			var service = new ExchangeOnlineManager(_username, _password);
 			var sc = new ExchangeScheduler(service, start, end, attendees) {
@@ -236,6 +233,8 @@ namespace UnitTestExchangeManager {
 			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.LastTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
 			var text = sb.ToString();
 			var to = $"{_username};{user};";
+
+			Debug.WriteLine(text);
 
 			await service.SendMailAsync(to, subject, text);
 		}
@@ -301,11 +300,15 @@ namespace UnitTestExchangeManager {
 		public async Task 非同期で予定を変更する() {
 			var mng = new ExchangeOnlineManager(_username, _password);
 
-			var uniqueId = "AAMkADgxMjVkZGFiLTI0NzAtNGZiZS1hZmFkLTY0ZTJjOGZlNmNkYwBGAAAAAACR5NF3YWTVSZG68BOtdbeGBwAJsLXPBlunQ6YENeQISOS/AAAAAAENAAAJsLXPBlunQ6YENeQISOS/AAAkvA9SAAA=";
+			var aps = mng.FindAppointments(new DateTime(2017, 4, 1), new DateTime(2017, 6, 1));
+
+			var ap = aps.FirstOrDefault(a => a.Subject.HasString("テニスレッスン"));
+
+			var uniqueId = ap?.Id?.UniqueId;
 
 			var appointment = await mng.UpdateAsync(uniqueId, a => {
 				// 予定のプロパティを新しい件名、開始時刻、終了時刻で更新します。
-				a.Subject = $"{a.Subject} moved one hour later and to the day after {a.Start:yyyy/MM/dd(ddd)}!";
+				a.Subject = $"moved one hour later and to the day after {a.Start:yyyy/MM/dd(ddd)}!";
 				a.Start = a.Start.AddHours(25);
 				a.End = a.End.AddHours(25);
 			});
@@ -314,6 +317,142 @@ namespace UnitTestExchangeManager {
 			Debug.WriteLine($@"""{appointment.Subject}""");
 		}
 
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("取得")]
+		public async Task 非同期で会議室の予定を取得する() {
+			var service = new ExchangeOnlineManager(_username, _password);
+
+			// 出席者(会議室)のコレクションを作成します。 
+			var attendees = await service.GetRoomsAsync();
+
+			var start = DateTime.Today;
+			var end = start.AddDays(7);
+
+			var sc = new ExchangeScheduler(service, start, end, attendees) {
+				GoodSuggestionThreshold = 49,
+				MaximumNonWorkHoursSuggestionsPerDay = 8,
+				MaximumSuggestionsPerDay = 8,
+				MeetingDuration = 60,
+				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
+				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
+			};
+
+			var sb = new StringBuilder();
+			var availabilities = await sc.GetUserAvailabilitiesAsync();
+
+			availabilities.ForEach(info => {
+				sb.AppendLine($"[{info.Key}]:");
+
+				// 出席者のカレンダーイベントのコレクションを取得します。
+				var days = info.Value.Select(ev => ev.StartTime.Date).Distinct();
+				var schedule = info.Value;
+
+				days.ForEach(day => {
+					sb.AppendLine($"{day:yyyy/MM/dd(ddd)}");
+
+					var blankPlans = day.GetBlankPlans();
+
+					var dayPlans = schedule.Where(d => d.StartTime.Date == day);
+
+					blankPlans.Where(p => !dayPlans.Any(d =>
+						d.StartTime <= p.StartTime  && p.StartTime < d.EndTime
+						|| d.StartTime < p.EndTime && p.EndTime <= d.EndTime
+					)).ForEach(ev => {
+						sb.AppendLine($"\t{ev.StartTime:HH:mm} ~ {ev.EndTime:HH:mm}");
+					});
+				});
+
+				sb.AppendLine();
+			});
+
+			sb.AppendLine("--------------------------------------------------------------------------------");
+
+			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.LastTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
+			var text = sb.ToString();
+			var to = $"{_username}";
+
+			Debug.WriteLine(text);
+
+			await service.SendMailAsync(to, subject, text);
+		}
+
 		#endregion
+	}
+
+	public static partial class TimeExtension {
+		public static IEnumerable<Ews.TimeWindow> GetBlankPlans(this DateTime @this) {
+			var ret = @this.GetBlankPlansPerMinutes(9.0, 18.0, 30);
+			var blankPlans = ret.ToCurrentAndNextPair()
+				.Select(cn => new Ews.TimeWindow(cn.Item1, cn.Item2));
+			return blankPlans;
+		}
+
+		public static LinkedList<DateTime> GetBlankPlansPerMinutes(this DateTime @this, double openingTime, double closingTime, int intervalPerMinutes) {
+			var today = @this.Date;
+			var b = new TimeSpan(Convert.ToInt64(TimeSpan.TicksPerHour * openingTime));
+			var f = new TimeSpan(Convert.ToInt64(TimeSpan.TicksPerHour * closingTime));
+			var ret = GetTimeSpans(b, f, intervalPerMinutes).Select(t => today + t).ToList();
+			return new LinkedList<DateTime>(ret);
+		}
+
+		/// <summary>
+		/// 現在の値と次の値のペアの列挙に変換します。
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <returns></returns>
+		public static IEnumerable<Tuple<T, T>> ToCurrentAndNextPair<T>(this LinkedList<T> @this)
+			=> @this
+			.Where(node => node.Next != null)
+			.Select(node => Tuple.Create(node.Value, node.Next.Value));
+
+		private static IEnumerable<TimeSpan> GetTimeSpans(TimeSpan open, TimeSpan close, int intervalPerMinutes) {
+			if (open > close) {
+				throw new ArgumentException($"終了時刻が、開始時刻よりも前に設定されています。: {close}", nameof(close));
+			}
+
+			var tt = new TimeSpan(TimeSpan.TicksPerMinute * intervalPerMinutes);
+			for (var m = open; m <= close; m += tt) {
+				yield return m;
+			}
+		}
+
+		private static IEnumerable<LinkedListNode<T>> ToEnumerable<T>(this LinkedList<T> @this) {
+			for (var node = @this.First; node != null; node = node.Next) {
+				yield return node;
+			}
+		}
+
+		/// <summary>
+		/// 各要素に対して、指定された処理を実行します。
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this">LinkedList</param>
+		/// <param name="action">各要素に対して実行するメソッド</param>
+		public static void ForEach<T>(this LinkedList<T> @this, Action<LinkedListNode<T>> action) {
+			@this.ToEnumerable().ToList().ForEach(action);
+		}
+
+		/// <summary>
+		/// LinkedList の各要素を新しいフォームに射影します。
+		/// </summary>
+		/// <typeparam name="TSource">source の要素の型</typeparam>
+		/// <typeparam name="TResult">selector によって返される値の型</typeparam>
+		/// <param name="this">LinkedList</param>
+		/// <param name="selector">各要素に適用する変換関数。</param>
+		/// <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む列挙を返します。</returns>
+		public static IEnumerable<TResult> Select<TSource, TResult>(this LinkedList<TSource> @this, Func<LinkedListNode<TSource>, TResult> selector)
+			=> @this.ToEnumerable().Select(selector);
+
+		/// <summary>
+		/// 述語に基づいて値のシーケンスをフィルター処理します。
+		/// </summary>
+		/// <typeparam name="TSource">source の要素の型</typeparam>
+		/// <param name="this">LinkedList</param>
+		/// <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+		/// <returns>条件を満たす、入力シーケンスの要素を含む列挙を返します。</returns>
+		public static IEnumerable<LinkedListNode<TSource>> Where<TSource>(this LinkedList<TSource> @this, Func<LinkedListNode<TSource>, bool> predicate)
+			=> @this.ToEnumerable().Where(predicate);
 	}
 }

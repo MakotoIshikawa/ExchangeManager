@@ -111,20 +111,26 @@ namespace ExchangeManager {
 		/// 非同期で
 		/// 会議室のコレクションを取得します。
 		/// </summary>
-		public Dictionary<string, string> GetRooms()
+		public IEnumerable<Ews.AttendeeInfo> GetRooms()
 			=> this.GetRoomLists()?
 				.SelectMany(rl => this.Service.GetRooms(rl.Address))?
 				.Distinct(r => r.Address)?
-				.ToDictionary(r => r.Address, r => r.Name);
+				.Select(r => new Ews.AttendeeInfo {
+					SmtpAddress = r.Address,
+					AttendeeType = Ews.MeetingAttendeeType.Room,
+				});
 
 		/// <summary>
 		/// 会議室のコレクションを取得します。
 		/// </summary>
-		public async Task<Dictionary<string, string>> GetRoomsAsync()
+		public async Task<IEnumerable<Ews.AttendeeInfo>> GetRoomsAsync()
 			=> (await this.GetRoomListsAsync())?
 				.SelectMany(rl => this.Service.GetRooms(rl.Address))?
 				.Distinct(r => r.Address)?
-				.ToDictionary(r => r.Address, r => r.Name);
+				.Select(r => new Ews.AttendeeInfo {
+					SmtpAddress = r.Address,
+					AttendeeType = Ews.MeetingAttendeeType.Room,
+				});
 
 		#endregion
 
