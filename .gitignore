@@ -242,3 +242,5 @@ ModelManifest.xml
 .fake/
 
 */app.config
+/ExchangeBotApp/Web.Release.config
+/ExchangeBotApp/Web.Debug.config

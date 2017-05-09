@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using ExchangeManager.Extensions;
 using ExchangeManager.Interface;
 using ExtensionsLibrary.Extensions;
 using Ews = Microsoft.Exchange.WebServices.Data;
@@ -20,6 +21,16 @@ namespace ExchangeManager {
 		#endregion
 
 		#region コンストラクタ
+
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="manager">Exchange を管理するオブジェクト</param>
+		/// <param name="date">日付</param>
+		/// <param name="attendees">出席者のコレクションを指定します。</param>
+		public ExchangeScheduler(IExchangeManager manager, DateTime date, params Ews.AttendeeInfo[] attendees)
+			: this(manager, date, date, attendees) {
+		}
 
 		/// <summary>
 		/// コンストラクタ

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExchangeManager.Interface;
 using ExchangeManager.Primitives;
+using ExchangeManager.Extensions;
 using ExtensionsLibrary.Extensions;
 using System.Threading.Tasks;
 using Ews = Microsoft.Exchange.WebServices.Data;
@@ -57,14 +58,13 @@ namespace ExchangeManager {
 		/// <param name="username">ユーザー名 (メールアドレス)</param>
 		/// <param name="password">パスワード</param>
 		/// <returns>生成した EWS のインスタンスを返します。</returns>
-		protected override Ews.ExchangeService CreateService(string username, string password) {
-			return new Ews.ExchangeService(Ews.ExchangeVersion.Exchange2013_SP1) {
+		protected override Ews.ExchangeService CreateService(string username, string password)
+			=> new Ews.ExchangeService(Ews.ExchangeVersion.Exchange2013_SP1) {
 				Credentials = new Ews.WebCredentials(username, password),
 				UseDefaultCredentials = false,
 				TraceEnabled = true,
 				TraceFlags = Ews.TraceFlags.All,
 			};
-		}
 
 		#region Bind
 
@@ -111,10 +111,25 @@ namespace ExchangeManager {
 		/// 非同期で
 		/// 会議室のコレクションを取得します。
 		/// </summary>
-		public IEnumerable<Ews.AttendeeInfo> GetRooms()
+		public IEnumerable<Ews.EmailAddress> GetRooms()
 			=> this.GetRoomLists()?
 				.SelectMany(rl => this.Service.GetRooms(rl.Address))?
-				.Distinct(r => r.Address)?
+				.Distinct(r => r.Address);
+
+		/// <summary>
+		/// 会議室のコレクションを取得します。
+		/// </summary>
+		public async Task<IEnumerable<Ews.EmailAddress>> GetRoomsAsync()
+			=> (await this.GetRoomListsAsync())?
+				.SelectMany(rl => this.Service.GetRooms(rl.Address))?
+				.Distinct(r => r.Address);
+
+		/// <summary>
+		/// 非同期で
+		/// 会議室のコレクションを取得します。
+		/// </summary>
+		public IEnumerable<Ews.AttendeeInfo> GetRoomsAsAttendee()
+			=> this.GetRooms()?
 				.Select(r => new Ews.AttendeeInfo {
 					SmtpAddress = r.Address,
 					AttendeeType = Ews.MeetingAttendeeType.Room,
@@ -123,10 +138,8 @@ namespace ExchangeManager {
 		/// <summary>
 		/// 会議室のコレクションを取得します。
 		/// </summary>
-		public async Task<IEnumerable<Ews.AttendeeInfo>> GetRoomsAsync()
-			=> (await this.GetRoomListsAsync())?
-				.SelectMany(rl => this.Service.GetRooms(rl.Address))?
-				.Distinct(r => r.Address)?
+		public async Task<IEnumerable<Ews.AttendeeInfo>> GetRoomsAsAttendeeAsync()
+			=> (await this.GetRoomsAsync())?
 				.Select(r => new Ews.AttendeeInfo {
 					SmtpAddress = r.Address,
 					AttendeeType = Ews.MeetingAttendeeType.Room,
@@ -232,30 +245,11 @@ namespace ExchangeManager {
 				, Ews.AppointmentSchema.TimeZone
 			);
 
-			return appointment.Update(update);
+			return await appointment.UpdateAsync(update);
 		}
 
 		#endregion
 
 		#endregion
-	}
-
-	public static class AppointmentExtension {
-
-		public static Ews.Appointment Update(this Ews.Appointment appointment, Action<Ews.Appointment> update) {
-			update?.Invoke(appointment);
-
-			// 明示的に指定しない限り、デフォルトではSendToAllAndSaveCopyを使用します。
-			// これにより、予定を会議に変換できます。
-			// これを避けるには、非会議でSendToNoneを明示的に設定します。
-			var mode = appointment.IsMeeting
-				? Ews.SendInvitationsOrCancellationsMode.SendToAllAndSaveCopy
-				: Ews.SendInvitationsOrCancellationsMode.SendToNone;
-
-			// 更新要求をExchangeサーバーに送信します。
-			appointment.Update(Ews.ConflictResolutionMode.AlwaysOverwrite, mode);
-
-			return appointment;
-		}
 	}
 }

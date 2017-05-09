@@ -247,7 +247,7 @@ namespace UnitTestExchangeManager {
 
 			var sb = new StringBuilder();
 
-			foreach (var address in service.GetRooms()) {
+			foreach (var address in service.GetRoomsAsAttendee()) {
 				sb.AppendLine(address.GetPropertiesString());
 			}
 
@@ -262,7 +262,7 @@ namespace UnitTestExchangeManager {
 
 			var sb = new StringBuilder();
 
-			foreach (var address in await service.GetRoomsAsync()) {
+			foreach (var address in await service.GetRoomsAsAttendeeAsync()) {
 				sb.AppendLine(address.GetPropertiesString());
 			}
 
@@ -324,7 +324,7 @@ namespace UnitTestExchangeManager {
 			var service = new ExchangeOnlineManager(_username, _password);
 
 			// 出席者(会議室)のコレクションを作成します。 
-			var attendees = await service.GetRoomsAsync();
+			var attendees = await service.GetRoomsAsAttendeeAsync();
 
 			var start = DateTime.Today;
 			var end = start.AddDays(7);
@@ -341,26 +341,17 @@ namespace UnitTestExchangeManager {
 			var sb = new StringBuilder();
 			var availabilities = await sc.GetUserAvailabilitiesAsync();
 
+			var openingTime = 9.0;
+			var closingTime = 18.0;
+			var intervalPerMinutes = 30;
+
 			availabilities.ForEach(info => {
 				sb.AppendLine($"[{info.Key}]:");
 
-				// 出席者のカレンダーイベントのコレクションを取得します。
-				var days = info.Value.Select(ev => ev.StartTime.Date).Distinct();
-				var schedule = info.Value;
+				var times = info.Value.GetBlankTimes(openingTime, closingTime, intervalPerMinutes);
 
-				days.ForEach(day => {
-					sb.AppendLine($"{day:yyyy/MM/dd(ddd)}");
-
-					var blankPlans = day.GetBlankPlans();
-
-					var dayPlans = schedule.Where(d => d.StartTime.Date == day);
-
-					blankPlans.Where(p => !dayPlans.Any(d =>
-						d.StartTime <= p.StartTime  && p.StartTime < d.EndTime
-						|| d.StartTime < p.EndTime && p.EndTime <= d.EndTime
-					)).ForEach(ev => {
-						sb.AppendLine($"\t{ev.StartTime:HH:mm} ~ {ev.EndTime:HH:mm}");
-					});
+				times.ForEach(t => {
+					sb.AppendLine($"\t{t.StartTime:yyyy/MM/dd(ddd) HH:mm} ~ {t.EndTime:yyyy/MM/dd(ddd) HH:mm}");
 				});
 
 				sb.AppendLine();
@@ -378,81 +369,5 @@ namespace UnitTestExchangeManager {
 		}
 
 		#endregion
-	}
-
-	public static partial class TimeExtension {
-		public static IEnumerable<Ews.TimeWindow> GetBlankPlans(this DateTime @this) {
-			var ret = @this.GetBlankPlansPerMinutes(9.0, 18.0, 30);
-			var blankPlans = ret.ToCurrentAndNextPair()
-				.Select(cn => new Ews.TimeWindow(cn.Item1, cn.Item2));
-			return blankPlans;
-		}
-
-		public static LinkedList<DateTime> GetBlankPlansPerMinutes(this DateTime @this, double openingTime, double closingTime, int intervalPerMinutes) {
-			var today = @this.Date;
-			var b = new TimeSpan(Convert.ToInt64(TimeSpan.TicksPerHour * openingTime));
-			var f = new TimeSpan(Convert.ToInt64(TimeSpan.TicksPerHour * closingTime));
-			var ret = GetTimeSpans(b, f, intervalPerMinutes).Select(t => today + t).ToList();
-			return new LinkedList<DateTime>(ret);
-		}
-
-		/// <summary>
-		/// 現在の値と次の値のペアの列挙に変換します。
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="this"></param>
-		/// <returns></returns>
-		public static IEnumerable<Tuple<T, T>> ToCurrentAndNextPair<T>(this LinkedList<T> @this)
-			=> @this
-			.Where(node => node.Next != null)
-			.Select(node => Tuple.Create(node.Value, node.Next.Value));
-
-		private static IEnumerable<TimeSpan> GetTimeSpans(TimeSpan open, TimeSpan close, int intervalPerMinutes) {
-			if (open > close) {
-				throw new ArgumentException($"終了時刻が、開始時刻よりも前に設定されています。: {close}", nameof(close));
-			}
-
-			var tt = new TimeSpan(TimeSpan.TicksPerMinute * intervalPerMinutes);
-			for (var m = open; m <= close; m += tt) {
-				yield return m;
-			}
-		}
-
-		private static IEnumerable<LinkedListNode<T>> ToEnumerable<T>(this LinkedList<T> @this) {
-			for (var node = @this.First; node != null; node = node.Next) {
-				yield return node;
-			}
-		}
-
-		/// <summary>
-		/// 各要素に対して、指定された処理を実行します。
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="this">LinkedList</param>
-		/// <param name="action">各要素に対して実行するメソッド</param>
-		public static void ForEach<T>(this LinkedList<T> @this, Action<LinkedListNode<T>> action) {
-			@this.ToEnumerable().ToList().ForEach(action);
-		}
-
-		/// <summary>
-		/// LinkedList の各要素を新しいフォームに射影します。
-		/// </summary>
-		/// <typeparam name="TSource">source の要素の型</typeparam>
-		/// <typeparam name="TResult">selector によって返される値の型</typeparam>
-		/// <param name="this">LinkedList</param>
-		/// <param name="selector">各要素に適用する変換関数。</param>
-		/// <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む列挙を返します。</returns>
-		public static IEnumerable<TResult> Select<TSource, TResult>(this LinkedList<TSource> @this, Func<LinkedListNode<TSource>, TResult> selector)
-			=> @this.ToEnumerable().Select(selector);
-
-		/// <summary>
-		/// 述語に基づいて値のシーケンスをフィルター処理します。
-		/// </summary>
-		/// <typeparam name="TSource">source の要素の型</typeparam>
-		/// <param name="this">LinkedList</param>
-		/// <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
-		/// <returns>条件を満たす、入力シーケンスの要素を含む列挙を返します。</returns>
-		public static IEnumerable<LinkedListNode<TSource>> Where<TSource>(this LinkedList<TSource> @this, Func<LinkedListNode<TSource>, bool> predicate)
-			=> @this.ToEnumerable().Where(predicate);
 	}
 }
