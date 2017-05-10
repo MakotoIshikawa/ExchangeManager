@@ -28,8 +28,8 @@ namespace ExchangeManager {
 		/// <param name="manager">Exchange を管理するオブジェクト</param>
 		/// <param name="date">日付</param>
 		/// <param name="attendees">出席者のコレクションを指定します。</param>
-		public ExchangeScheduler(IExchangeManager manager, DateTime date, params Ews.AttendeeInfo[] attendees)
-			: this(manager, date, date, attendees) {
+		public ExchangeScheduler(IExchangeManager manager, DateTime date, params string[] addresses)
+			: this(manager, date, date, addresses.Select(a => new Ews.AttendeeInfo(a))) {
 		}
 
 		/// <summary>
@@ -74,6 +74,11 @@ namespace ExchangeManager {
 		/// 出席者のコレクションを取得します。
 		/// </summary>
 		public IEnumerable<Ews.AttendeeInfo> Attendees { get; protected set; }
+
+		/// <summary>
+		/// 出席者アドレスのコレクションを取得します。
+		/// </summary>
+		public IEnumerable<string> Addresses => Attendees.Select(a => a.SmtpAddress);
 
 		/// <summary>
 		/// GetUserAvailability メソッドを介して要求できるデータの種類を定義します。
@@ -232,6 +237,21 @@ namespace ExchangeManager {
 
 		#endregion
 
+		/// <summary>
+		/// 開業時間
+		/// </summary>
+		public double OpeningTime { get; set; } = 9.0;
+
+		/// <summary>
+		/// 終業時間
+		/// </summary>
+		public double ClosingTime { get; set; } = 18.0;
+
+		/// <summary>
+		/// 分単位刻みの間隔
+		/// </summary>
+		public int IntervalPerMinutes { get; set; } = 30;
+
 		#endregion
 
 		#region メソッド
@@ -244,7 +264,7 @@ namespace ExchangeManager {
 		/// <returns>各ユーザーの可用性情報が表示されます。
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		protected virtual Ews.GetUserAvailabilityResults GetUserAvailability()
-			=> this.Manager.GetUserAvailability(this.Attendees, this._options, this.RequestedData);
+			=> this.Manager.GetUserAvailability(this.Addresses, this._options, this.RequestedData);
 
 		/// <summary>
 		/// 非同期で
@@ -253,7 +273,7 @@ namespace ExchangeManager {
 		/// <returns>各ユーザーの可用性情報が表示されます。
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		protected virtual async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync()
-			=> await this.Manager.GetUserAvailabilityAsync(this.Attendees, this._options, this.RequestedData);
+			=> await this.Manager.GetUserAvailabilityAsync(this.Addresses, this._options, this.RequestedData);
 
 		#endregion
 
@@ -301,10 +321,10 @@ namespace ExchangeManager {
 		/// <returns>出席者のカレンダーイベントのコレクションを返します。</returns>
 		public Dictionary<string, Collection<Ews.CalendarEvent>> GetUserAvailabilities() {
 			var results = this.GetUserAvailability();
-			return this.Attendees.Zip(results.AttendeesAvailability, (at, av) => new {
-				Attendee = at,
-				Availability = av,
-			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents);
+			return this.Addresses.Zip(results.AttendeesAvailability, (ad, av) => new {
+				SmtpAddress = ad,
+				av.CalendarEvents,
+			}).ToDictionary(a => a.SmtpAddress, a => a.CalendarEvents);
 		}
 
 		/// <summary>
@@ -312,15 +332,32 @@ namespace ExchangeManager {
 		/// 出席者のカレンダーイベントのコレクションを取得します。
 		/// </summary>
 		/// <returns>出席者のカレンダーイベントのコレクションを返します。</returns>
-		public async Task<Dictionary<string, List<Ews.CalendarEvent>>> GetUserAvailabilitiesAsync() {
+		public async Task<Dictionary<string, Collection<Ews.CalendarEvent>>> GetUserAvailabilitiesAsync() {
 			var results = await this.GetUserAvailabilityAsync();
-			return this.Attendees.Zip(results.AttendeesAvailability, (at, av) => new {
-				Attendee = at,
-				Availability = av,
-			}).ToDictionary(a => a.Attendee.SmtpAddress, a => a.Availability.CalendarEvents.ToList());
+			return this.Addresses.Zip(results.AttendeesAvailability, (ad, av) => new {
+				SmtpAddress = ad,
+				av.CalendarEvents,
+			}).ToDictionary(a => a.SmtpAddress, a => a.CalendarEvents);
 		}
 
 		#endregion
+
+		/// <summary>
+		/// 空き時間を取得します。
+		/// </summary>
+		/// <returns>空き時間の情報を返します。</returns>
+		public async Task<IEnumerable<Tuple<string, IEnumerable<Ews.TimeWindow>>>> GetBlankTimesAsync() {
+			var availabilities = await this.GetUserAvailabilitiesAsync();
+
+			var openingTime = this.OpeningTime;
+			var closingTime = this.ClosingTime;
+			var intervalPerMinutes = this.IntervalPerMinutes;
+
+			return availabilities.Select(info => Tuple.Create(
+				info.Key,
+				info.Value.GetBlankTimes(openingTime, closingTime, intervalPerMinutes))
+			);
+		}
 
 		#endregion
 	}

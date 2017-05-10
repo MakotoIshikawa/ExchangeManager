@@ -105,9 +105,21 @@ namespace ExchangeManager.Extensions {
 		public static Ews.GetUserAvailabilityResults GetUserAvailability(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
 			=> @this.GetUserAvailability(attendees, options.DetailedSuggestionsWindow, requestedData, options);
 
+		/// <summary>
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="this">ExchangeService</param>
+		/// <param name="addresses">可用性情報を取得する出席者のアドレス。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		public static Ews.GetUserAvailabilityResults GetUserAvailability(this Ews.ExchangeService @this, IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
+			=> @this.GetUserAvailability(addresses.Select(a => new Ews.AttendeeInfo(a)), options, requestedData);
+
 		#endregion
 
-		#region GetUserAvailabilityAsync
+		#region GetUserAvailabilityAsync (オーバーロード)
 
 		/// <summary>
 		/// 非同期で
@@ -121,6 +133,19 @@ namespace ExchangeManager.Extensions {
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		public static async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(this Ews.ExchangeService @this, IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
 			=> await Task.Run(() => @this.GetUserAvailability(attendees, options, requestedData));
+
+		/// <summary>
+		/// 非同期で
+		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
+		/// </summary>
+		/// <param name="this">ExchangeService</param>
+		/// <param name="addresses">可用性情報を取得する出席者のアドレス。</param>
+		/// <param name="options">返される情報を制御するオプション。</param>
+		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
+		/// <returns>各ユーザーの可用性情報が表示されます。
+		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
+		public static async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(this Ews.ExchangeService @this, IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
+			=> await @this.GetUserAvailabilityAsync(addresses.Select(a => new Ews.AttendeeInfo(a)), options, requestedData);
 
 		#endregion
 

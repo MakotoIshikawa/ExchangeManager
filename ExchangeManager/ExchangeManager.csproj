@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExchangeServerManager.cs" />
     <Compile Include="ExchangeOnlineManager.cs" />
     <Compile Include="ExchangeScheduler.cs" />
     <Compile Include="Extensions\AppointmentExtension.cs" />

@@ -20,7 +20,7 @@ namespace ExchangeBotApp.Extensions {
 		#region ユーザーデータ
 
 		public static T GetUserData<T>(this IDialogContext @this, string key)
-			=> @this.UserData.Get<T>(key);
+			=> @this.UserData.GetValue<T>(key);
 
 		/// <summary>
 		/// ユーザーデータに値を設定します。

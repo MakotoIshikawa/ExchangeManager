@@ -10,6 +10,34 @@ namespace ExchangeManager.Extensions {
 	/// TimeWindow を拡張するメソッドを提供します。
 	/// </summary>
 	public static partial class TimeWindowExtension {
+		#region メソッド
+
+		#region IsWithinRange
+
+		/// <summary>
+		/// 指定した期間の範囲内かどうかを判定します。
+		/// </summary>
+		/// <param name="this">TimeWindow</param>
+		/// <param name="value">期間</param>
+		/// <returns>範囲内であれば true。それ以外は false を返します。</returns>
+		public static bool IsWithinRange(this Ews.TimeWindow @this, Ews.CalendarEvent value)
+			=> value.StartTime <= @this.StartTime && @this.StartTime < value.EndTime
+			|| value.StartTime < @this.EndTime && @this.EndTime <= value.EndTime;
+
+		/// <summary>
+		/// 指定した期間の範囲内かどうかを判定します。
+		/// </summary>
+		/// <param name="this">TimeWindow</param>
+		/// <param name="value">期間</param>
+		/// <returns>範囲内であれば true。それ以外は false を返します。</returns>
+		public static bool IsWithinRange(this Ews.TimeWindow @this, Ews.TimeWindow value)
+			=> value.StartTime <= @this.StartTime && @this.StartTime < value.EndTime
+			|| value.StartTime < @this.EndTime && @this.EndTime <= value.EndTime;
+
+		#endregion
+
+		#region GetBlankPlans
+
 		/// <summary>
 		/// 指定した時間帯と時間間隔で
 		/// 空の予定を列挙します。
@@ -42,20 +70,30 @@ namespace ExchangeManager.Extensions {
 			}
 		}
 
-		public static IEnumerable<Ews.TimeWindow> GetBlankTimes(this List<Ews.CalendarEvent> @this, double openingTime, double closingTime, int intervalPerMinutes) {
+		#endregion
+
+		#region GetBlankTimes
+
+		public static IEnumerable<Ews.TimeWindow> GetBlankTimes(this IEnumerable<Ews.CalendarEvent> @this, double openingTime, double closingTime, int intervalPerMinutes) {
+			var tws = @this.Select(ev => new Ews.TimeWindow(ev.StartTime, ev.EndTime));
+			return tws.GetBlankTimes(openingTime, closingTime, intervalPerMinutes);
+		}
+
+		public static IEnumerable<Ews.TimeWindow> GetBlankTimes(this IEnumerable<Ews.TimeWindow> @this, double openingTime, double closingTime, int intervalPerMinutes) {
 			var days = @this.Select(ev => ev.StartTime.Date).Distinct();
 
 			var times = (
 				from day in days
 				let blankPlans = day.GetBlankPlans(openingTime, closingTime, intervalPerMinutes)
 				let dayPlans = @this.Where(d => d.StartTime.Date == day)
-				select blankPlans.Where(p => !dayPlans.Any(d =>
-					 d.StartTime <= p.StartTime && p.StartTime < d.EndTime
-					 || d.StartTime < p.EndTime && p.EndTime <= d.EndTime
-				))
+				select blankPlans.Where(p => !dayPlans.Any(d => p.IsWithinRange(d)))
 			).SelectMany(p => p);
 
 			return times;
 		}
+
+		#endregion
+
+		#endregion
 	}
 }

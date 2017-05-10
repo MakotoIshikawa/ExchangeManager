@@ -320,38 +320,37 @@ namespace UnitTestExchangeManager {
 		[TestMethod]
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("取得")]
-		public async Task 非同期で会議室の予定を取得する() {
+		public async Task 非同期で会議室の空き時間を取得する() {
 			var service = new ExchangeOnlineManager(_username, _password);
 
 			// 出席者(会議室)のコレクションを作成します。 
-			var attendees = await service.GetRoomsAsAttendeeAsync();
+			var addresses = await service.GetRoomsAsync();
 
 			var start = DateTime.Today;
-			var end = start.AddDays(7);
 
-			var sc = new ExchangeScheduler(service, start, end, attendees) {
+			var sc = new ExchangeScheduler(service, start, addresses.Select(a => a.Address).ToArray()) {
 				GoodSuggestionThreshold = 49,
 				MaximumNonWorkHoursSuggestionsPerDay = 8,
 				MaximumSuggestionsPerDay = 8,
 				MeetingDuration = 60,
 				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
 				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
+				OpeningTime = 9.0,
+				ClosingTime = 18.0,
+				IntervalPerMinutes = 30,
 			};
 
 			var sb = new StringBuilder();
+			sb.AppendLine("--------------------------------------------------------------------------------");
+
 			var availabilities = await sc.GetUserAvailabilitiesAsync();
+			var times = await sc.GetBlankTimesAsync();
 
-			var openingTime = 9.0;
-			var closingTime = 18.0;
-			var intervalPerMinutes = 30;
+			times.ForEach(info => {
+				sb.AppendLine($"[{info.Item1}]:");
 
-			availabilities.ForEach(info => {
-				sb.AppendLine($"[{info.Key}]:");
-
-				var times = info.Value.GetBlankTimes(openingTime, closingTime, intervalPerMinutes);
-
-				times.ForEach(t => {
-					sb.AppendLine($"\t{t.StartTime:yyyy/MM/dd(ddd) HH:mm} ~ {t.EndTime:yyyy/MM/dd(ddd) HH:mm}");
+				info.Item2.ForEach(t => {
+					sb.AppendLine($"\t{t.StartTime:HH:mm} ~ {t.EndTime:HH:mm}");
 				});
 
 				sb.AppendLine();
@@ -359,7 +358,7 @@ namespace UnitTestExchangeManager {
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
 
-			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} ~ {sc.LastTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
+			var subject = $"{sc.StartTime:yyyy/MM/dd(ddd)} の推奨される会議時間";
 			var text = sb.ToString();
 			var to = $"{_username}";
 

@@ -7,16 +7,6 @@ namespace ExchangeManager.Interface {
 	public interface IExchangeManager {
 		#region プロパティ
 
-		/// <summary>
-		/// ユーザー名 (メールアドレス)
-		/// </summary>
-		string UserName { get; }
-
-		/// <summary>
-		/// パスワード
-		/// </summary>
-		string Password { get; }
-
 		#endregion
 
 		#region メソッド
@@ -67,7 +57,7 @@ namespace ExchangeManager.Interface {
 
 		#endregion
 
-		#region 空き時間確認
+		#region 予定情報取得
 
 		/// <summary>
 		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
@@ -79,6 +69,9 @@ namespace ExchangeManager.Interface {
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
 
+
+		Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
+
 		/// <summary>
 		/// 非同期で
 		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
@@ -89,6 +82,8 @@ namespace ExchangeManager.Interface {
 		/// <returns>各ユーザーの可用性情報が表示されます。
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
+
+		Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
 
 		#endregion
 
