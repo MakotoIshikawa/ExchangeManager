@@ -43,6 +43,9 @@ namespace ExchangeManager.Extensions {
 		/// 空の予定を列挙します。
 		/// </summary>
 		/// <param name="this">日付</param>
+		/// <param name="openingTime">開業時刻</param>
+		/// <param name="closingTime">終業時刻</param>
+		/// <param name="intervalPerMinutes">分刻みの間隔</param>
 		/// <returns>空の予定の列挙を返します。</returns>
 		public static IEnumerable<Ews.TimeWindow> GetBlankPlans(this DateTime @this, double openingTime, double closingTime, int intervalPerMinutes) {
 			var ret = @this.GetBlankPlansPerMinutes(openingTime, closingTime, intervalPerMinutes);

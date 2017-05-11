@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Ews = Microsoft.Exchange.WebServices.Data;
 
@@ -43,6 +44,40 @@ namespace ExchangeManager.Extensions {
 		/// <returns>アポイントを返します。</returns>
 		public static async Task<Ews.Appointment> UpdateAsync(this Ews.Appointment @this, Action<Ews.Appointment> update)
 			=> await Task.Run(() => @this.Update(update));
+
+		#endregion
+
+		#region 保存
+
+		/// <summary>
+		/// このアポイントをカレンダーフォルダに保存します。
+		/// このメソッドを呼び出すと、少なくとも1回EWSが呼び出されます。
+		/// 添付ファイルが追加されていれば、EWSへの複数の呼び出しが行われる可能性があります。
+		/// </summary>
+		/// <param name="this">Appointment</param>
+		/// <param name="setting">アポイントの詳細設定をするメソッド</param>
+		/// <returns>アポイントを返します。</returns>
+		public static Ews.Appointment Save(this Ews.Appointment @this, Action<Ews.Appointment> setting = null) {
+			setting?.Invoke(@this);
+
+			var mode = (@this.RequiredAttendees.Any())
+				? Ews.SendInvitationsMode.SendToAllAndSaveCopy
+				: Ews.SendInvitationsMode.SendToNone;
+
+			// 予定をカレンダーに保存します。
+			@this.Save(mode);
+
+			return @this;
+		}
+
+		/// <summary>
+		/// 非同期でこのアポイントをカレンダーフォルダに保存します。
+		/// </summary>
+		/// <param name="this">Appointment</param>
+		/// <param name="setting">アポイントの詳細設定をするメソッド</param>
+		/// <returns>アポイントを返します。</returns>
+		public static async Task<Ews.Appointment> SaveAsync(this Ews.Appointment @this, Action<Ews.Appointment> setting = null)
+			=> await Task.Run(() => @this.Save(setting));
 
 		#endregion
 

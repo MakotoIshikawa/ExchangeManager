@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\ExchangeManager.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\ExchangeManager.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -53,6 +55,10 @@
       <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.Auth.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -69,10 +75,12 @@
     <Compile Include="Extensions\AppointmentExtension.cs" />
     <Compile Include="Extensions\AttendeeInfoExtension.cs" />
     <Compile Include="Extensions\ExchangeServiceExtension.cs" />
+    <Compile Include="Extensions\JsonConvertExtension.cs" />
     <Compile Include="Extensions\LinkedListExtension.cs" />
     <Compile Include="Extensions\TimeWindowExtension.cs" />
     <Compile Include="Interface\IExchangeManager.cs" />
-    <Compile Include="Model\PlanInfo.cs" />
+    <Compile Include="Model\MeetingModel.cs" />
+    <Compile Include="Model\PlanModel.cs" />
     <Compile Include="Primitives\ExchangeManagerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

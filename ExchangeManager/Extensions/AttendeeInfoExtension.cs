@@ -13,7 +13,7 @@ namespace ExchangeManager.Extensions {
 		/// <summary>
 		/// 末尾に AttendeeInfo のインスタンスを追加します。
 		/// </summary>
-		/// <param name="this"></param>
+		/// <param name="this">AttendeeInfo のリスト</param>
 		/// <param name="smtpAddress">SMTPアドレス</param>
 		/// <param name="attendeeType">会議出席者のタイプ</param>
 		/// <param name="excludeConflicts">この参加者が利用できない時間が返されるべきかどうかを示す値</param>
@@ -21,6 +21,17 @@ namespace ExchangeManager.Extensions {
 			SmtpAddress = smtpAddress,
 			AttendeeType = attendeeType,
 			ExcludeConflicts = excludeConflicts,
+		});
+
+		/// <summary>
+		/// 末尾に EmailAddress のインスタンスを追加します。
+		/// </summary>
+		/// <param name="this">EmailAddress のリスト</param>
+		/// <param name="address">アドレス</param>
+		/// <param name="name">名前</param>
+		public static void Add(this List<EmailAddress> @this, string address, string name) => @this.Add(new EmailAddress() {
+			Address = address,
+			Name = name,
 		});
 
 		#endregion

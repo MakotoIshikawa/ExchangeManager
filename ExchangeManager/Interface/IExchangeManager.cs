@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Ews = Microsoft.Exchange.WebServices.Data;
 
 namespace ExchangeManager.Interface {
+	/// <summary>
+	/// Exchange を管理するインターフェイスを提供します。
+	/// </summary>
 	public interface IExchangeManager {
 		#region プロパティ
 
@@ -62,28 +65,56 @@ namespace ExchangeManager.Interface {
 		/// <summary>
 		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
 		/// </summary>
-		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="addresses">可用性情報を取得する出席者のアドレス。</param>
 		/// <param name="options">返される情報を制御するオプション。</param>
 		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
 		/// <returns>各ユーザーの可用性情報が表示されます。
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
-		Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
-
-
 		Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
 
 		/// <summary>
 		/// 非同期で
 		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
 		/// </summary>
-		/// <param name="attendees">可用性情報を取得する出席者。</param>
+		/// <param name="addresses">可用性情報を取得する出席者のアドレス。</param>
 		/// <param name="options">返される情報を制御するオプション。</param>
 		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
 		/// <returns>各ユーザーの可用性情報が表示されます。
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
-		Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
-
 		Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions);
+
+		#endregion
+
+		#region 予定作成
+
+		#region Save
+
+		/// <summary>
+		/// 予定を作成します。
+		/// </summary>
+		/// <param name="subject">件名</param>
+		/// <param name="start">開始時刻</param>
+		/// <param name="end">終了時刻</param>
+		/// <param name="setting">予定の詳細設定をするメソッド</param>
+		/// <returns>予定を返します。</returns>
+		Ews.Appointment Save(string subject, DateTime start, DateTime end, Action<Ews.Appointment> setting = null);
+
+		#endregion
+
+		#region SaveAsync
+
+		/// <summary>
+		/// 非同期で
+		/// 予定を作成します。
+		/// </summary>
+		/// <param name="subject">件名</param>
+		/// <param name="start">開始時刻</param>
+		/// <param name="end">終了時刻</param>
+		/// <param name="setting">予定の詳細設定をするメソッド</param>
+		/// <returns>予定を返します。</returns>
+		Task<Ews.Appointment> SaveAsync(string subject, DateTime start, DateTime end, Action<Ews.Appointment> setting = null);
+
+		#endregion
 
 		#endregion
 

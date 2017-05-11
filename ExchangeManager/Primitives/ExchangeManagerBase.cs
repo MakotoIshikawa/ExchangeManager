@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExchangeManager.Extensions;
 using ExchangeManager.Interface;
+using ExchangeManager.Model;
 using ExtensionsLibrary.Extensions;
 using Ews = Microsoft.Exchange.WebServices.Data;
 
@@ -122,16 +123,7 @@ namespace ExchangeManager.Primitives {
 				End = end,
 			};
 
-			setting?.Invoke(appointment);
-
-			var mode = (appointment.RequiredAttendees.Any())
-				? Ews.SendInvitationsMode.SendToAllAndSaveCopy
-				: Ews.SendInvitationsMode.SendToNone;
-
-			// 予定をカレンダーに保存します。
-			appointment.Save(mode);
-
-			return appointment;
+			return appointment.Save(setting);
 		}
 
 		#endregion
@@ -148,7 +140,40 @@ namespace ExchangeManager.Primitives {
 		/// <param name="setting">予定の詳細設定をするメソッド</param>
 		/// <returns>予定を返します。</returns>
 		public async Task<Ews.Appointment> SaveAsync(string subject, DateTime start, DateTime end, Action<Ews.Appointment> setting = null)
-			=> await Task.Run(() => Save(this.Service, subject, start, end, setting));
+			=> await SaveAsync(this.Service, subject, start, end, setting);
+
+		private static async Task<Ews.Appointment> SaveAsync(Ews.ExchangeService service, string subject, DateTime start, DateTime end, Action<Ews.Appointment> setting) {
+			// 予定を作成する予定オブジェクトのプロパティを設定します。
+			var appointment = new Ews.Appointment(service) {
+				Subject = subject,
+				Start = start,
+				End = end,
+			};
+
+			return await appointment.SaveAsync(setting);
+		}
+
+		public async Task<Ews.ItemId> SaveAsync(MeetingModel meeting) {
+			var subject = meeting.Subject;
+			var body = meeting.Body;
+			var start = meeting.Start;
+			var end = meeting.End;
+			var location = meeting.Location;
+			var reminderMinutesBeforeStart = 60;
+
+			var appointment = await this.SaveAsync(subject, start, end, a => {
+				a.Body = body;
+				a.Location = location;
+				a.ReminderMinutesBeforeStart = reminderMinutesBeforeStart;
+
+				meeting.Attendees.ForEach(user => a.RequiredAttendees.Add(user));
+
+				a.Resources.Add(meeting.ConferenceRoom.Address);
+			});
+
+			var id = appointment.Id;
+			return id;
+		}
 
 		#endregion
 
@@ -256,17 +281,6 @@ namespace ExchangeManager.Primitives {
 		/// <summary>
 		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
 		/// </summary>
-		/// <param name="attendees">可用性情報を取得する出席者。</param>
-		/// <param name="options">返される情報を制御するオプション。</param>
-		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
-		/// <returns>各ユーザーの可用性情報が表示されます。
-		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
-		public virtual Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
-			=> this.Service.GetUserAvailability(attendees, options, requestedData);
-
-		/// <summary>
-		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
-		/// </summary>
 		/// <param name="addresses">可用性情報を取得する出席者のアドレス。</param>
 		/// <param name="options">返される情報を制御するオプション。</param>
 		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
@@ -274,18 +288,6 @@ namespace ExchangeManager.Primitives {
 		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
 		public virtual Ews.GetUserAvailabilityResults GetUserAvailability(IEnumerable<string> addresses, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
 			=> this.Service.GetUserAvailability(addresses, options, requestedData);
-
-		/// <summary>
-		/// 非同期で
-		/// 指定した時間枠内のユーザー、ルーム、リソースのセットの可用性に関する詳細情報を取得します。
-		/// </summary>
-		/// <param name="attendees">可用性情報を取得する出席者。</param>
-		/// <param name="options">返される情報を制御するオプション。</param>
-		/// <param name="requestedData">要求されたデータ。(フリー/ビジーおよび/または提案)</param>
-		/// <returns>各ユーザーの可用性情報が表示されます。
-		/// 要求内のユーザーの順序によって、応答内の各ユーザーの可用性データの順序が決まります。</returns>
-		public virtual async Task<Ews.GetUserAvailabilityResults> GetUserAvailabilityAsync(IEnumerable<Ews.AttendeeInfo> attendees, Ews.AvailabilityOptions options, Ews.AvailabilityData requestedData = Ews.AvailabilityData.FreeBusyAndSuggestions)
-			=> await this.Service.GetUserAvailabilityAsync(attendees, options, requestedData);
 
 		/// <summary>
 		/// 非同期で
@@ -307,18 +309,41 @@ namespace ExchangeManager.Primitives {
 		/// 既存の予定にバインドし、その最初のクラスのプロパティを読み込みます。
 		/// このメソッドを呼び出すと、EWSが呼び出されます。
 		/// </summary>
-		/// <param name="uniqueId"></param>
-		/// <param name="additionalProperties"></param>
-		/// <returns></returns>
+		/// <param name="uniqueId">予定ID</param>
+		/// <param name="additionalProperties">読み込むプロパティの配列</param>
+		/// <returns>予定を返します。</returns>
 		public Ews.Appointment Bind(string uniqueId, params Ews.PropertyDefinitionBase[] additionalProperties)
 			=> this.Bind(new Ews.ItemId(uniqueId), additionalProperties);
 
+		/// <summary>
+		/// 既存の予定にバインドし、その最初のクラスのプロパティを読み込みます。
+		/// このメソッドを呼び出すと、EWSが呼び出されます。
+		/// </summary>
+		/// <param name="id">予定ID</param>
+		/// <param name="additionalProperties">読み込むプロパティの配列</param>
+		/// <returns>予定を返します。</returns>
 		public Ews.Appointment Bind(Ews.ItemId id, params Ews.PropertyDefinitionBase[] additionalProperties)
 			=> Bind(this.Service, id, additionalProperties);
 
+		/// <summary>
+		/// 非同期で
+		/// 既存の予定にバインドし、その最初のクラスのプロパティを読み込みます。
+		/// このメソッドを呼び出すと、EWSが呼び出されます。
+		/// </summary>
+		/// <param name="uniqueId">予定ID</param>
+		/// <param name="additionalProperties">読み込むプロパティの配列</param>
+		/// <returns>予定を返します。</returns>
 		public async Task<Ews.Appointment> BindAsync(string uniqueId, params Ews.PropertyDefinitionBase[] additionalProperties)
 			=> await this.BindAsync(new Ews.ItemId(uniqueId), additionalProperties);
 
+		/// <summary>
+		/// 非同期で
+		/// 既存の予定にバインドし、その最初のクラスのプロパティを読み込みます。
+		/// このメソッドを呼び出すと、EWSが呼び出されます。
+		/// </summary>
+		/// <param name="id">予定ID</param>
+		/// <param name="additionalProperties">読み込むプロパティの配列</param>
+		/// <returns>予定を返します。</returns>
 		public async Task<Ews.Appointment> BindAsync(Ews.ItemId id, params Ews.PropertyDefinitionBase[] additionalProperties)
 			=> await Task.Run(() => Bind(this.Service, id, additionalProperties));
 

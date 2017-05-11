@@ -6,8 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using ExchangeManager;
 using ExchangeManager.Extensions;
+using ExchangeManager.Model;
 using ExtensionsLibrary.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using UnitTestExchangeManager.Properties;
 using Ews = Microsoft.Exchange.WebServices.Data;
 
@@ -106,12 +108,12 @@ namespace UnitTestExchangeManager {
 		[TestCategory("取得")]
 		public void 空き時間を取得する() {
 			// 出席者のコレクションを作成します。 
-			var attendees = new List<Ews.AttendeeInfo> {
-				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
-				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
-				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
-				{ "conference_f29_01@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
-				{ "conference_f29_02@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Room },	// 会議室
+			var attendees = new List<Ews.EmailAddress> {
+				{ "root@kariverification14.onmicrosoft.com", "主催者" },	// 主催者
+				{ "ishikawm@kariverification14.onmicrosoft.com", "必須" },	// 必須
+				{ "chiakimi@kariverification14.onmicrosoft.com", "任意" },	// 任意
+				{ "conference_f29_01@kariverification14.onmicrosoft.com", "会議室01" },	// 会議室
+				{ "conference_f29_02@kariverification14.onmicrosoft.com", "会議室02" },	// 会議室
 			};
 
 			var start = new DateTime(2017, 04, 24);
@@ -132,7 +134,7 @@ namespace UnitTestExchangeManager {
 			var sb = new StringBuilder();
 
 			// 提案された会議時間を表示します。
-			var str = attendees.Select(a => $"\t{a.SmtpAddress}").Join("\n");
+			var str = attendees.Select(a => $"\t{a.Address}").Join("\n");
 			sb.AppendLine($"アドレス :\n{str}").AppendLine();
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
@@ -175,10 +177,10 @@ namespace UnitTestExchangeManager {
 		[TestCategory("取得")]
 		public async Task 非同期で空き時間を取得する() {
 			// 出席者のコレクションを作成します。 
-			var attendees = new List<Ews.AttendeeInfo> {
-				{ "root@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Organizer },		// 主催者
-				{ "ishikawm@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Required },	// 必須
-				{ "chiakimi@kariverification14.onmicrosoft.com", Ews.MeetingAttendeeType.Optional },	// 任意
+			var attendees = new List<Ews.EmailAddress> {
+				{ "root@kariverification14.onmicrosoft.com", "主催者" },	// 主催者
+				{ "ishikawm@kariverification14.onmicrosoft.com", "必須" },	// 必須
+				{ "chiakimi@kariverification14.onmicrosoft.com", "任意" },	// 任意
 			};
 
 			var start = DateTime.Today;
@@ -199,7 +201,7 @@ namespace UnitTestExchangeManager {
 			var sb = new StringBuilder();
 
 			// 提案された会議時間を表示します。
-			var str = attendees.Select(a => $"\t{a.SmtpAddress}").Join("\n");
+			var str = attendees.Select(a => $"\t{a.Address}").Join("\n");
 			sb.AppendLine($"アドレス :\n{str}").AppendLine();
 
 			sb.AppendLine("--------------------------------------------------------------------------------");
@@ -297,6 +299,35 @@ namespace UnitTestExchangeManager {
 		[TestMethod]
 		[Owner(nameof(ExchangeOnlineManager))]
 		[TestCategory("作成")]
+		public async Task 非同期で予定を作成する() {
+			var mng = new ExchangeOnlineManager(_username, _password);
+			var room = new Ews.EmailAddress("F29 会議室 01", "conference_f29_01@kariverification14.onmicrosoft.com");
+
+			var subject = "チームビルディングエクササイズ";
+			var body = "本当にチームとして働き、昼食を取ることを学びましょう！";
+			var start = new DateTime(2017, 5, 29, 14, 30, 0);
+			var end = start.AddHours(2.5);
+			var location = room.Name;
+			var reminderMinutesBeforeStart = 60;
+
+			var appointment = await mng.SaveAsync(subject, start, end, a => {
+				a.Body = body;
+				a.Location = location;
+				a.ReminderMinutesBeforeStart = reminderMinutesBeforeStart;
+
+				a.RequiredAttendees.Add(_username);
+				a.Resources.Add(room.Address);
+			});
+
+			// 予定のアイテムIDを使用して予定が作成されたことを確認します。
+			var item = mng.Bind(appointment.Id.UniqueId, Ews.ItemSchema.Subject);
+
+			Debug.WriteLine($@"Meeting created: {item.Subject}");
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("作成")]
 		public async Task 非同期で予定を変更する() {
 			var mng = new ExchangeOnlineManager(_username, _password);
 
@@ -328,7 +359,7 @@ namespace UnitTestExchangeManager {
 
 			var start = DateTime.Today;
 
-			var sc = new ExchangeScheduler(service, start, addresses.Select(a => a.Address).ToArray()) {
+			var sc = new ExchangeScheduler(service, start, addresses.ToArray()) {
 				GoodSuggestionThreshold = 49,
 				MaximumNonWorkHoursSuggestionsPerDay = 8,
 				MaximumSuggestionsPerDay = 8,
@@ -365,6 +396,36 @@ namespace UnitTestExchangeManager {
 			Debug.WriteLine(text);
 
 			await service.SendMailAsync(to, subject, text);
+		}
+
+		[TestMethod]
+		[Owner(nameof(ExchangeOnlineManager))]
+		[TestCategory("変換")]
+		public void JSON変換() {
+			var tim = new Ews.TimeWindow(DateTime.Today, DateTime.Now);
+			{
+				var json = tim.ToJson();
+
+				Assert.IsFalse(json.IsEmpty());
+
+				var val = json.Deserialize<Ews.TimeWindow>();
+
+
+				Assert.AreEqual(tim.EndTime, val.EndTime);
+			}
+			{
+				var room = new Ews.EmailAddress("F29 会議室 01", "conference_f29_01@kariverification14.onmicrosoft.com");
+				var meeting = new MeetingModel("テスト用の予定", room, tim.StartTime, tim.EndTime);
+				meeting.Attendees.Add(_username);
+
+				var json = meeting.ToJson();
+
+				Assert.IsFalse(json.IsEmpty());
+
+				var val = json.Deserialize<MeetingModel>();
+
+				Assert.AreEqual(room.Name, val.Location);
+			}
 		}
 
 		#endregion

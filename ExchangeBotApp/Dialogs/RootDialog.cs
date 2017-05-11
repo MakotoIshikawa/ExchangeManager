@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExchangeBotApp.Extensions;
 using ExchangeBotApp.Properties;
 using ExchangeManager;
 using ExchangeManager.Extensions;
+using ExchangeManager.Model;
 using ExtensionsLibrary.Extensions;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
@@ -17,7 +19,7 @@ namespace ExchangeBotApp.Dialogs {
 
 		private static string _username = Settings.Default.UserName;
 		private static string _password = Settings.Default.Password;
-		private static ExchangeOnlineManager _service = new ExchangeOnlineManager(_username, _password);
+		private static ExchangeOnlineManager _manager = new ExchangeOnlineManager(_username, _password);
 
 		#endregion
 
@@ -48,14 +50,20 @@ namespace ExchangeBotApp.Dialogs {
 					await PostAllScheduleAsync(context);
 
 					return;
-				} else if (msg.MatchWords("StartTime", "EndTime")) {
-					await context.PostAsync($"会議室を予約します。");
+				} else if (msg.MatchWords("address", "start", "end")) {
+					var meeting = msg.Deserialize<MeetingModel>();
 
-					//TODO: 会議室予約処理
+					await context.PostAsync($"{meeting.Location}を予約します。");
+
+					var id = await _manager.SaveAsync(meeting);
+
+					var item = await _manager.BindAsync(id);
+
+					await context.PostAsync($"{item.Location}を予約しました。");
 
 					return;
 				} else if (msg.MatchWords("会議", "場所")) {
-					var roomls = await _service.GetRoomListsAsync();
+					var roomls = await _manager.GetRoomListsAsync();
 					var dic = roomls.ToDictionary(r => r.Name, r => r.Address);
 
 					await context.PostButtonsAsync($"会議室のある場所の一覧です。", dic);
@@ -85,10 +93,10 @@ namespace ExchangeBotApp.Dialogs {
 		/// </summary>
 		/// <param name="context">DialogContext</param>
 		private async Task PostAllScheduleAsync(IDialogContext context) {
-			var rooms = await _service.GetRoomsAsync();
+			var rooms = await _manager.GetRoomsAsync();
 
 			await context.PostAsync($"全ての会議室の空き状況をお調べします。");
-			await PostConferenceScheduleAsync(context, rooms.Select(r => r.Address).ToArray());
+			await PostConferenceScheduleAsync(context, rooms.ToArray());
 		}
 
 		/// <summary>
@@ -96,7 +104,7 @@ namespace ExchangeBotApp.Dialogs {
 		/// </summary>
 		/// <param name="context">DialogContext</param>
 		private async Task PostListOfMeetingRoomsAsync(IDialogContext context) {
-			var rooms = await _service.GetRoomsAsync();
+			var rooms = await _manager.GetRoomsAsync();
 			var dic = rooms.ToDictionary(r => r.Name, r => r.Address);
 
 			await context.PostButtonsAsync($"会議室の一覧です。", dic);
@@ -107,10 +115,10 @@ namespace ExchangeBotApp.Dialogs {
 		/// </summary>
 		/// <param name="context">DialogContext</param>
 		/// <param name="addresses">メールアドレス</param>
-		private async Task PostConferenceScheduleAsync(IDialogContext context, params string[] addresses) {
+		private async Task PostConferenceScheduleAsync(IDialogContext context, params Ews.EmailAddress[] addresses) {
 			var now = DateTime.Now;
 			var today = now.Date;
-			var sc = new ExchangeScheduler(_service, today, addresses) {
+			var sc = new ExchangeScheduler(_manager, today, addresses) {
 				GoodSuggestionThreshold = 49,
 				MaximumNonWorkHoursSuggestionsPerDay = 8,
 				MaximumSuggestionsPerDay = 8,
@@ -130,16 +138,22 @@ namespace ExchangeBotApp.Dialogs {
 			}
 
 			times.ForEach(async time => {
-				var alias = time.Item1.CommentOut("@");
+				var mailBox = time.Item1;
 				var ts = time.Item2.Where(t => t.StartTime > now);
 				if (!ts.Any()) {
-					await context.PostAsync($"{alias} : {today:yyyy/MM/dd(ddd)} 空いてる時間帯はありません。");
+					await context.PostAsync($"{mailBox.Name} : {today:yyyy/MM/dd(ddd)} 空いてる時間帯はありません。");
 					return;
 				}
 
-				var dic = ts.ToDictionary(t => $"\t{t.StartTime:HH:mm} ~ {t.EndTime:HH:mm}", t => t.GetPropertiesString());
+				var dic = ts.Select(t => new MeetingModel("会議", mailBox, t.StartTime, t.EndTime) {
+					Body = "Bot から予約された会議です。",
+					Attendees = new List<string> { _username },
+				}).ToDictionary(
+					t => $"\t{t.Start:HH:mm} ~ {t.End:HH:mm}"
+					, t => t.ToJson()
+				);
 
-				await context.PostButtonsAsync($"{alias} : {today:yyyy/MM/dd(ddd)} 以下の時間帯が空いています。", dic);
+				await context.PostButtonsAsync($"{mailBox.Name} : {today:yyyy/MM/dd(ddd)} 以下の時間帯が空いています。", dic);
 			});
 		}
 
