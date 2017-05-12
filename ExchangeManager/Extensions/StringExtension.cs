@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 
-namespace ExchangeBotApp.Extensions {
+namespace ExchangeManager.Extensions {
 	/// <summary>
 	/// String を拡張するメソッドを提供します。
 	/// </summary>

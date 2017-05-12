@@ -79,6 +79,7 @@
     <Compile Include="Extensions\AppointmentExtension.cs" />
     <Compile Include="Extensions\ListAddExtension.cs" />
     <Compile Include="Extensions\ExchangeServiceExtension.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\TimeWindowExtension.cs" />
     <Compile Include="Interface\IExchangeManager.cs" />
     <Compile Include="Model\MeetingModel.cs" />

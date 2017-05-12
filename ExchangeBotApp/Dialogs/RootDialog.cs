@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ExchangeBotApp.Extensions;
 using ExchangeBotApp.Properties;
 using ExchangeManager;
+using ExchangeManager.Extensions;
 using ExchangeManager.Model;
 using ExtensionsLibrary.Extensions;
 using JsonLibrary.Extensions;
