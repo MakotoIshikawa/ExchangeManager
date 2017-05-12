@@ -153,6 +153,12 @@ namespace ExchangeManager.Primitives {
 			return await appointment.SaveAsync(setting);
 		}
 
+		/// <summary>
+		/// 非同期で
+		/// 会議の予定を作成します。
+		/// </summary>
+		/// <param name="meeting">会議の予定</param>
+		/// <returns>予定 ID を返します。</returns>
 		public async Task<Ews.ItemId> SaveAsync(MeetingModel meeting) {
 			var subject = meeting.Subject;
 			var body = meeting.Body;

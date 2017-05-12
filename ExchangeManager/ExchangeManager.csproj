@@ -47,6 +47,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\ExtensionsLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="JsonLibrary, Version=1.7.5.20780, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\JsonLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Exchange.WebServices, Version=15.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Exchange.WebServices.2.2\lib\40\Microsoft.Exchange.WebServices.dll</HintPath>
       <Private>True</Private>
@@ -73,10 +77,8 @@
     <Compile Include="ExchangeOnlineManager.cs" />
     <Compile Include="ExchangeScheduler.cs" />
     <Compile Include="Extensions\AppointmentExtension.cs" />
-    <Compile Include="Extensions\AttendeeInfoExtension.cs" />
+    <Compile Include="Extensions\ListAddExtension.cs" />
     <Compile Include="Extensions\ExchangeServiceExtension.cs" />
-    <Compile Include="Extensions\JsonConvertExtension.cs" />
-    <Compile Include="Extensions\LinkedListExtension.cs" />
     <Compile Include="Extensions\TimeWindowExtension.cs" />
     <Compile Include="Interface\IExchangeManager.cs" />
     <Compile Include="Model\MeetingModel.cs" />

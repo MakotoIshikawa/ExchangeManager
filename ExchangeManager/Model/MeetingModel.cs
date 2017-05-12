@@ -11,6 +11,9 @@ namespace ExchangeManager.Model {
 	public class MeetingModel : PlanModel {
 		#region コンストラクタ
 
+		/// <summary>
+		/// 予定情報の新しいインスタンスを生成します。
+		/// </summary>
 		public MeetingModel() {
 		}
 

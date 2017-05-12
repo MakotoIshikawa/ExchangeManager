@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JsonLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:JsonLibrary.Extensions.JsonConvertExtension">
+            <summary>
+            JSON 変換を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:JsonLibrary.Extensions.JsonConvertExtension.ToJson``1(``0,System.Boolean)">
+            <summary>
+            JSON 形式の文字列に変換します。
+            </summary>
+            <typeparam name="T">オブジェクトの型</typeparam>
+            <param name="this">オブジェクト</param>
+            <param name="ignoreNull">null 値を無視するかどうか</param>
+            <returns>JSON 形式の文字列を返します。</returns>
+        </member>
+        <member name="M:JsonLibrary.Extensions.JsonConvertExtension.Deserialize``1(System.String,System.Boolean)">
+            <summary>
+            JSON 形式の文字列をオブジェクトに変換します。
+            </summary>
+            <typeparam name="T">オブジェクトの型</typeparam>
+            <param name="this">文字列</param>
+            <param name="ignoreNull">null 値を無視するかどうか</param>
+            <returns>変換したオブジェクトを返します。</returns>
+        </member>
+    </members>
+</doc>

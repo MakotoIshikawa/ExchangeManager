@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExchangeManager.Extensions;
 using ExtensionsLibrary.Extensions;
 using Ews = Microsoft.Exchange.WebServices.Data;
 
@@ -77,11 +76,27 @@ namespace ExchangeManager.Extensions {
 
 		#region GetBlankTimes
 
+		/// <summary>
+		/// 予定イベントの列挙から、予定のない時間帯の列挙を取得します。
+		/// </summary>
+		/// <param name="this">CalendarEvent の列挙</param>
+		/// <param name="openingTime">開業時刻</param>
+		/// <param name="closingTime">終業時刻</param>
+		/// <param name="intervalPerMinutes">分刻みの間隔</param>
+		/// <returns>予定のない時間帯の列挙を返します。</returns>
 		public static IEnumerable<Ews.TimeWindow> GetBlankTimes(this IEnumerable<Ews.CalendarEvent> @this, double openingTime, double closingTime, int intervalPerMinutes) {
 			var tws = @this.Select(ev => new Ews.TimeWindow(ev.StartTime, ev.EndTime));
 			return tws.GetBlankTimes(openingTime, closingTime, intervalPerMinutes);
 		}
 
+		/// <summary>
+		/// 時間帯の列挙から、予定のない時間帯の列挙を取得します。
+		/// </summary>
+		/// <param name="this">TimeWindow の列挙</param>
+		/// <param name="openingTime">開業時刻</param>
+		/// <param name="closingTime">終業時刻</param>
+		/// <param name="intervalPerMinutes">分刻みの間隔</param>
+		/// <returns>予定のない時間帯の列挙を返します。</returns>
 		public static IEnumerable<Ews.TimeWindow> GetBlankTimes(this IEnumerable<Ews.TimeWindow> @this, double openingTime, double closingTime, int intervalPerMinutes) {
 			var days = @this.Select(ev => ev.StartTime.Date).Distinct();
 

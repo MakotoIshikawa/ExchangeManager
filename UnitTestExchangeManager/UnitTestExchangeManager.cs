@@ -8,6 +8,7 @@ using ExchangeManager;
 using ExchangeManager.Extensions;
 using ExchangeManager.Model;
 using ExtensionsLibrary.Extensions;
+using JsonLibrary.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using UnitTestExchangeManager.Properties;

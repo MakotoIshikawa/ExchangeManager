@@ -1,6 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
-using ExchangeManager.Extensions;
+using JsonLibrary.Extensions;
 using Newtonsoft.Json;
 using Ews = Microsoft.Exchange.WebServices.Data;
 
@@ -16,6 +15,9 @@ namespace ExchangeManager.Model {
 
 		#region コンストラクタ
 
+		/// <summary>
+		/// 予定情報の新しいインスタンスを生成します。
+		/// </summary>
 		public PlanModel() {
 		}
 

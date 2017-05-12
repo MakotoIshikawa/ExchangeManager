@@ -12,7 +12,6 @@ namespace ExchangeManager {
 	/// <summary>
 	/// Exchange の予定表を
 	/// </summary>
-	/// <typeparam name="TExchangeManager">IExchangeManager を実装する型</typeparam>
 	public class ExchangeScheduler {
 		#region フィールド
 

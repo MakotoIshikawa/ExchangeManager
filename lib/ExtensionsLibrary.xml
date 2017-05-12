@@ -730,6 +730,54 @@
             <param name="typeCode">返すオブジェクトの型。</param>
             <returns>基になる型が typeCode であり、@this と等価の値を持つオブジェクト。</returns>
         </member>
+        <member name="T:ExtensionsLibrary.Extensions.LinkedListExtension">
+            <summary>
+            LinkedList を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.LinkedListExtension.ToEnumerable``1(System.Collections.Generic.LinkedList{``0})">
+            <summary>
+            LinkedListNode を列挙します。
+            </summary>
+            <typeparam name="T">要素の型</typeparam>
+            <param name="this">LinkedList</param>
+            <returns>LinkedListNode の列挙を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.LinkedListExtension.ForEach``1(System.Collections.Generic.LinkedList{``0},System.Action{System.Collections.Generic.LinkedListNode{``0}})">
+            <summary>
+            各要素に対して、指定された処理を実行します。
+            </summary>
+            <typeparam name="T">要素の型</typeparam>
+            <param name="this">LinkedList</param>
+            <param name="action">各要素に対して実行するメソッド</param>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.LinkedListExtension.Select``2(System.Collections.Generic.LinkedList{``0},System.Func{System.Collections.Generic.LinkedListNode{``0},``1})">
+            <summary>
+            LinkedList の各要素を新しいフォームに射影します。
+            </summary>
+            <typeparam name="TSource">source の要素の型</typeparam>
+            <typeparam name="TResult">selector によって返される値の型</typeparam>
+            <param name="this">LinkedList</param>
+            <param name="selector">各要素に適用する変換関数。</param>
+            <returns>source の各要素に対して変換関数を呼び出した結果として得られる要素を含む列挙を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.LinkedListExtension.Where``1(System.Collections.Generic.LinkedList{``0},System.Func{System.Collections.Generic.LinkedListNode{``0},System.Boolean})">
+            <summary>
+            述語に基づいて値のシーケンスをフィルター処理します。
+            </summary>
+            <typeparam name="TSource">source の要素の型</typeparam>
+            <param name="this">LinkedList</param>
+            <param name="predicate">各要素が条件を満たしているかどうかをテストする関数。</param>
+            <returns>条件を満たす、入力シーケンスの要素を含む列挙を返します。</returns>
+        </member>
+        <member name="M:ExtensionsLibrary.Extensions.LinkedListExtension.ToCurrentAndNextPair``1(System.Collections.Generic.LinkedList{``0})">
+            <summary>
+            現在の値と次の値のペアの列挙に変換します。
+            </summary>
+            <typeparam name="T">要素の型</typeparam>
+            <param name="this">LinkedList</param>
+            <returns>現在の値と次の値のペアの列挙を返します。</returns>
+        </member>
         <member name="T:ExtensionsLibrary.Extensions.ListAddExtension">
             <summary>
             ジェネリックのリストに要素を追加する拡張メソッドを提供します。
