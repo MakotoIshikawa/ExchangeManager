@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ExchangeManager.Interface;
 using ExchangeManager.Primitives;
 using Ews = Microsoft.Exchange.WebServices.Data;
@@ -23,21 +24,28 @@ namespace ExchangeManager {
 			this.Password = password;
 			this.Service = this.CreateService();
 
-			this.Service.AutodiscoverUrl(username, url => {
-				// 検証コールバックのデフォルトは、URLを拒否することです。
-				var result = false;
+			var delay = 30000;
+			var ret = Task.Run(() => {
+				this.Service.AutodiscoverUrl(username, url => {
+					// 検証コールバックのデフォルトは、URLを拒否することです。
+					var result = false;
 
-				var redirectionUri = new Uri(url);
+					var redirectionUri = new Uri(url);
 
-				// リダイレクトURLの内容を検証します。
-				// この単純な検証コールバックでは、HTTPSを使用して認証資格情報を暗号化する場合、
-				// リダイレクトURLは有効と見なされます。
-				if (redirectionUri.Scheme == "https") {
-					result = true;
-				}
+					// リダイレクトURLの内容を検証します。
+					// この単純な検証コールバックでは、HTTPSを使用して認証資格情報を暗号化する場合、
+					// リダイレクトURLは有効と見なされます。
+					if (redirectionUri.Scheme == "https") {
+						result = true;
+					}
 
-				return result;
-			});
+					return result;
+				});
+			}).Wait(delay);
+
+			if (!ret) {
+				throw new TimeoutException("Exchange への接続がタイムアウトしました。");
+			}
 		}
 
 		#endregion
