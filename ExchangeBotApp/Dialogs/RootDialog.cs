@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExchangeBotApp.Extensions;
-using ExchangeBotApp.Properties;
 using ExchangeManager;
 using ExchangeManager.Extensions;
 using ExchangeManager.Model;
@@ -11,16 +9,14 @@ using ExtensionsLibrary.Extensions;
 using JsonLibrary.Extensions;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using Ews = Microsoft.Exchange.WebServices.Data;
 
 namespace ExchangeBotApp.Dialogs {
 	[Serializable]
 	public class RootDialog : IDialog<object> {
 		#region フィールド
 
-		private static string _username = Settings.Default.UserName;
-		private static string _password = Settings.Default.Password;
-		private static ExchangeOnlineManager _manager = new ExchangeOnlineManager(_username, _password);
+		private static string _username = null;
+		private static string _password = null;
 
 		#endregion
 
@@ -47,8 +43,27 @@ namespace ExchangeBotApp.Dialogs {
 					throw new ApplicationException("何かメッセージを入れてください。");
 				}
 
+				var args = msg.Split(',', ';', '|', ' ');
+
+				if (args.Length == 2 && args[0].IsMailAddress() && !args[1].IsEmpty()) {
+					context.SetUserData(nameof(_username), args[0]);
+					context.SetUserData(nameof(_password), args[1]);
+
+					await context.PostAsync("ユーザ名とパスワードを設定しました。");
+					return;
+				}
+
+				_username = context.GetUserData<string>(nameof(_username));
+				_password = context.GetUserData<string>(nameof(_password));
+
+				if (_username.IsEmpty() || _password.IsEmpty()) {
+					throw new ApplicationException("ユーザ名とパスワードを入力して下さい。");
+				}
+
+				var _manager = new ExchangeOnlineManager(_username, _password);
+
 				if (msg.MatchWords("会議", "空")) {
-					await PostAllScheduleAsync(context);
+					await context.PostAllScheduleAsync(_manager);
 
 					return;
 				} else if (msg.MatchWords("address", "start", "end")) {
@@ -57,7 +72,6 @@ namespace ExchangeBotApp.Dialogs {
 					await context.PostAsync($"{meeting.Location}を予約します。");
 
 					var id = await _manager.SaveAsync(meeting);
-
 					var item = await _manager.BindAsync(id);
 
 					await context.PostAsync($"{item.Location}を予約しました。");
@@ -71,13 +85,17 @@ namespace ExchangeBotApp.Dialogs {
 
 					return;
 				} else if (msg.MatchWords("会議室")) {
-					await PostListOfMeetingRoomsAsync(context);
+					await context.PostListOfMeetingRoomsAsync(_manager);
 
 					return;
 				}
 
 				if (msg.IsMailAddress()) {
-					await PostConferenceScheduleAsync(context, msg);
+					//TODO: 会議室配布グループのアドレスなのか、会議室自体のアドレスなのかを判定する処理
+					//TODO: 会議室配布グループのアドレスの場合、所属する会議室の一覧を表示する処理
+
+					// 会議室の空き時間表示
+					await context.PostConferenceScheduleAsync(_manager, msg);
 					return;
 				}
 
@@ -87,75 +105,6 @@ namespace ExchangeBotApp.Dialogs {
 			} finally {
 				context.Wait(MessageReceivedAsync);
 			}
-		}
-
-		/// <summary>
-		/// 全ての会議室の空席情報を返します。
-		/// </summary>
-		/// <param name="context">DialogContext</param>
-		private async Task PostAllScheduleAsync(IDialogContext context) {
-			var rooms = await _manager.GetRoomsAsync();
-
-			await context.PostAsync($"全ての会議室の空き状況をお調べします。");
-			await PostConferenceScheduleAsync(context, rooms.ToArray());
-		}
-
-		/// <summary>
-		/// 会議室の一覧情報を返します。
-		/// </summary>
-		/// <param name="context">DialogContext</param>
-		private async Task PostListOfMeetingRoomsAsync(IDialogContext context) {
-			var rooms = await _manager.GetRoomsAsync();
-			var dic = rooms.ToDictionary(r => r.Name, r => r.Address);
-
-			await context.PostButtonsAsync($"会議室の一覧です。", dic);
-		}
-
-		/// <summary>
-		/// 会議室の空席情報を返します。
-		/// </summary>
-		/// <param name="context">DialogContext</param>
-		/// <param name="addresses">メールアドレス</param>
-		private async Task PostConferenceScheduleAsync(IDialogContext context, params Ews.EmailAddress[] addresses) {
-			var now = DateTime.Now;
-			var today = now.Date;
-			var sc = new ExchangeScheduler(_manager, today, addresses) {
-				GoodSuggestionThreshold = 49,
-				MaximumNonWorkHoursSuggestionsPerDay = 8,
-				MaximumSuggestionsPerDay = 8,
-				MeetingDuration = 60,
-				MinimumSuggestionQuality = Ews.SuggestionQuality.Good,
-				RequestedFreeBusyView = Ews.FreeBusyViewType.FreeBusy,
-				OpeningTime = 9.0,
-				ClosingTime = 18.0,
-				IntervalPerMinutes = 30,
-			};
-
-			var times = await sc.GetBlankTimesAsync();
-
-			if (!(times?.SelectMany(t => t.Item2)?.Any(t => t.StartTime > now) ?? false)) {
-				await context.PostAsync($"{today:yyyy/MM/dd(ddd)} 現在、空いてる会議室がありません。");
-				return;
-			}
-
-			times.ForEach(async time => {
-				var mailBox = time.Item1;
-				var ts = time.Item2.Where(t => t.StartTime > now);
-				if (!ts.Any()) {
-					await context.PostAsync($"{mailBox.Name} : {today:yyyy/MM/dd(ddd)} 空いてる時間帯はありません。");
-					return;
-				}
-
-				var dic = ts.Select(t => new MeetingModel("会議", mailBox, t.StartTime, t.EndTime) {
-					Body = "Bot から予約された会議です。",
-					Attendees = new List<string> { _username },
-				}).ToDictionary(
-					t => $"\t{t.Start:HH:mm} ~ {t.End:HH:mm}"
-					, t => t.ToJson()
-				);
-
-				await context.PostButtonsAsync($"{mailBox.Name} : {today:yyyy/MM/dd(ddd)} 以下の時間帯が空いています。", dic);
-			});
 		}
 
 		#endregion

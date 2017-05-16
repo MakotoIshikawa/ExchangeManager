@@ -22,23 +22,5 @@ namespace ExchangeBotApp.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("root@abc123.onmicrosoft.com")]
-        public string UserName {
-            get {
-                return ((string)(this["UserName"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("YYYYYYYY")]
-        public string Password {
-            get {
-                return ((string)(this["Password"]));
-            }
-        }
     }
 }

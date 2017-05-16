@@ -19,10 +19,8 @@ namespace ExchangeManager {
 		/// </summary>
 		/// <param name="username">ユーザー名 (メールアドレス)</param>
 		/// <param name="password">パスワード</param>
-		public ExchangeOnlineManager(string username, string password) : base() {
-			this.UserName = username;
+		public ExchangeOnlineManager(string username, string password) : base(username) {
 			this.Password = password;
-
 			this.Service = this.CreateService();
 
 			this.Service.AutodiscoverUrl(username, url => {
@@ -45,11 +43,6 @@ namespace ExchangeManager {
 		#endregion
 
 		#region プロパティ
-
-		/// <summary>
-		/// ユーザー名 (メールアドレス)
-		/// </summary>
-		public string UserName { get; protected set; }
 
 		/// <summary>
 		/// パスワード

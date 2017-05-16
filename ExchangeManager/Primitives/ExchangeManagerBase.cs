@@ -25,14 +25,27 @@ namespace ExchangeManager.Primitives {
 		protected ExchangeManagerBase() {
 		}
 
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="username">ユーザー名 (メールアドレス)</param>
+		protected ExchangeManagerBase(string username) {
+			this.UserName = username;
+		}
+
 		#endregion
 
 		#region プロパティ
 
 		/// <summary>
-		/// ExchangeService
+		/// Exchange Webサービスへのバインドを取得します。
 		/// </summary>
 		public Ews.ExchangeService Service { get; protected set; }
+
+		/// <summary>
+		/// ユーザー名 (メールアドレス)
+		/// </summary>
+		public string UserName { get; protected set; }
 
 		#endregion
 
