@@ -23,6 +23,13 @@ namespace ExchangeBotApp.Extensions {
 
 		#region ユーザーデータ
 
+		/// <summary>
+		/// ユーザーデータから値を取得します。
+		/// </summary>
+		/// <typeparam name="T">値の型</typeparam>
+		/// <param name="this">DialogContext</param>
+		/// <param name="key">キー</param>
+		/// <returns>値を返します。</returns>
 		public static T GetUserData<T>(this IDialogContext @this, string key)
 			=> @this.UserData.GetValueOrDefault(u => u.GetValue<T>(key));
 
@@ -45,6 +52,8 @@ namespace ExchangeBotApp.Extensions {
 		/// </summary>
 		/// <param name="this">IDialogContext</param>
 		/// <param name="result">LUIS の結果</param>
+		/// <param name="dictionary">ボタンの元となる連想配列</param>
+		/// <param name="ex">例外</param>
 		public static async Task PostDefaultResponseMessageAsync(this IDialogContext @this, LuisResult result, Dictionary<string, string> dictionary, Exception ex = null) {
 			var msg = GetDefaultResponseMessage(result, ex);
 			await @this.PostButtonsAsync(msg, dictionary);
@@ -54,6 +63,7 @@ namespace ExchangeBotApp.Extensions {
 		/// デフォルト時の応答メッセージを取得します。
 		/// </summary>
 		/// <param name="result">LUIS の結果</param>
+		/// <param name="ex">例外</param>
 		/// <returns>応答メッセージを返します。</returns>
 		private static string GetDefaultResponseMessage(this LuisResult result, Exception ex = null) {
 			var sb = new StringBuilder();
@@ -73,9 +83,15 @@ namespace ExchangeBotApp.Extensions {
 
 		#region PostButtonsAsync
 
-		public static async Task PostButtonsAsync(this IDialogContext context, string text, Dictionary<string, string> dictionary) {
+		/// <summary>
+		/// Button 群を POST します。
+		/// </summary>
+		/// <param name="this">DialogContext</param>
+		/// <param name="text">メッセージ</param>
+		/// <param name="dictionary">ボタン群の元となる連想配列</param>
+		public static async Task PostButtonsAsync(this IDialogContext @this, string text, Dictionary<string, string> dictionary) {
 			var btns = dictionary?.ToButtons();
-			await context.PostMessageAsync(text, btns);
+			await @this.PostMessageAsync(text, btns);
 		}
 
 		private static Attachment ToButtons(this Dictionary<string, string> dictionary, string text = null) {
@@ -169,10 +185,13 @@ namespace ExchangeBotApp.Extensions {
 
 		#endregion
 
+		#region 会議室情報
+
 		/// <summary>
 		/// 全ての会議室の空席情報を返します。
 		/// </summary>
 		/// <param name="context">DialogContext</param>
+		/// <param name="manager">Exchange を管理するオブジェクト</param>
 		public static async Task PostAllScheduleAsync(this IDialogContext context, IExchangeManager manager) {
 			var rooms = await manager.GetRoomsAsync();
 
@@ -184,6 +203,7 @@ namespace ExchangeBotApp.Extensions {
 		/// 会議室の一覧情報を返します。
 		/// </summary>
 		/// <param name="context">DialogContext</param>
+		/// <param name="manager">Exchange を管理するオブジェクト</param>
 		public static async Task PostListOfMeetingRoomsAsync(this IDialogContext context, IExchangeManager manager) {
 			var rooms = await manager.GetRoomsAsync();
 			var dic = rooms.ToDictionary(r => r.Name, r => r.Address);
@@ -195,6 +215,7 @@ namespace ExchangeBotApp.Extensions {
 		/// 会議室の空席情報を返します。
 		/// </summary>
 		/// <param name="context">DialogContext</param>
+		/// <param name="manager">Exchange を管理するオブジェクト</param>
 		/// <param name="addresses">メールアドレス</param>
 		public static async Task PostConferenceScheduleAsync(this IDialogContext context, IExchangeManager manager, params Ews.EmailAddress[] addresses) {
 			var now = DateTime.Now;
@@ -237,17 +258,6 @@ namespace ExchangeBotApp.Extensions {
 				await context.PostButtonsAsync($"{mailBox.Name} : {today:yyyy/MM/dd(ddd)} 以下の時間帯が空いています。", dic);
 			});
 		}
-
-		#region MatchWords
-
-		/// <summary>
-		/// 指定したワードの配列を全て含んでいるかどうか判定します。
-		/// </summary>
-		/// <param name="this">string</param>
-		/// <param name="words">ワードの配列</param>
-		/// <returns>全てのワードを含んでいる場合は、true を返します。</returns>
-		public static bool MatchWords(this string @this, params string[] words)
-			=> words.All(s => @this.HasString(s));
 
 		#endregion
 

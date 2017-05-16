@@ -3,7 +3,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace ExchangeBotApp {
+	/// <summary>
+	/// Web Api Config
+	/// </summary>
 	public static class WebApiConfig {
+		/// <summary>
+		/// 登録処理
+		/// </summary>
+		/// <param name="config">設定</param>
 		public static void Register(HttpConfiguration config) {
 			// Json settings
 			var with = config.Formatters.JsonFormatter.SerializerSettings;

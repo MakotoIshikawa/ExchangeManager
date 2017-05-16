@@ -6,6 +6,9 @@ using ExchangeBotApp.Extensions;
 using Microsoft.Bot.Connector;
 
 namespace ExchangeBotApp {
+	/// <summary>
+	/// メッセージコントローラー
+	/// </summary>
 	[BotAuthentication]
 	public class MessagesController : ApiController {
 		/// <summary>

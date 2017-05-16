@@ -11,6 +11,9 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
 namespace ExchangeBotApp.Dialogs {
+	/// <summary>
+	/// 会議室情報を返信する Bot のダイアログです。
+	/// </summary>
 	[Serializable]
 	public class RootDialog : IDialog<object> {
 		#region フィールド

@@ -1008,6 +1008,14 @@
             <returns>その文字列が見つかった場合は、true。
             見つからなかった場合は false。</returns>
         </member>
+        <member name="M:ExtensionsLibrary.Extensions.StringExtension.MatchWords(System.String,System.String[])">
+            <summary>
+            指定したワードの配列を全て含んでいるかどうか判定します。
+            </summary>
+            <param name="this">string</param>
+            <param name="words">ワードの配列</param>
+            <returns>全てのワードを含んでいる場合は、true を返します。</returns>
+        </member>
         <member name="M:ExtensionsLibrary.Extensions.StringExtension.CommentOut(System.String,System.String)">
             <summary>
             文字列から指定された記号以降の文字列をコメントアウトします。
