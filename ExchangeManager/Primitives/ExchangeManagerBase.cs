@@ -29,7 +29,7 @@ namespace ExchangeManager.Primitives {
 		/// コンストラクタ
 		/// </summary>
 		/// <param name="username">ユーザー名 (メールアドレス)</param>
-		protected ExchangeManagerBase(string username) {
+		protected ExchangeManagerBase(string username) : this() {
 			this.UserName = username;
 		}
 
@@ -373,17 +373,17 @@ namespace ExchangeManager.Primitives {
 
 		#endregion
 
-		#region 会議室一覧コレクション取得
+		#region 会議室配布グループコレクション取得
 
 		/// <summary>
-		/// 会議室一覧のコレクションを取得します。
+		/// 会議室配布グループのコレクションを取得します。
 		/// </summary>
 		public IEnumerable<Ews.EmailAddress> GetRoomLists()
 			=> this.Service.GetRoomLists();
 
 		/// <summary>
 		/// 非同期で
-		/// 会議室一覧のコレクションを取得します。
+		/// 会議室配布グループのコレクションを取得します。
 		/// </summary>
 		public async Task<IEnumerable<Ews.EmailAddress>> GetRoomListsAsync()
 			=> await Task.Run(() => this.GetRoomLists());

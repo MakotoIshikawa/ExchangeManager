@@ -9,6 +9,7 @@ using ExtensionsLibrary.Extensions;
 using JsonLibrary.Extensions;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
+using Ews = Microsoft.Exchange.WebServices.Data;
 
 namespace ExchangeBotApp.Dialogs {
 	/// <summary>
@@ -63,10 +64,10 @@ namespace ExchangeBotApp.Dialogs {
 					throw new ApplicationException("ユーザ名とパスワードを入力して下さい。");
 				}
 
-				var _manager = new ExchangeOnlineManager(_username, _password);
+				var manager = new ExchangeOnlineManager(_username, _password);
 
 				if (msg.MatchWords("会議", "空")) {
-					await context.PostAllScheduleAsync(_manager);
+					await context.PostAllScheduleAsync(manager);
 
 					return;
 				} else if (msg.MatchWords("address", "start", "end")) {
@@ -74,21 +75,21 @@ namespace ExchangeBotApp.Dialogs {
 
 					await context.PostAsync($"{meeting.Location}を予約します。");
 
-					var id = await _manager.SaveAsync(meeting);
-					var item = await _manager.BindAsync(id);
+					var id = await manager.SaveAsync(meeting);
+					var item = await manager.BindAsync(id);
 
 					await context.PostAsync($"{item.Location}を予約しました。");
 
 					return;
 				} else if (msg.MatchWords("会議", "場所")) {
-					var roomls = await _manager.GetRoomListsAsync();
+					var roomls = await manager.GetRoomListsAsync();
 					var dic = roomls.ToDictionary(r => r.Name, r => r.Address);
 
 					await context.PostButtonsAsync($"会議室のある場所の一覧です。", dic);
 
 					return;
 				} else if (msg.MatchWords("会議室")) {
-					await context.PostListOfMeetingRoomsAsync(_manager);
+					await context.PostListOfMeetingRoomsAsync(manager);
 
 					return;
 				}
@@ -97,8 +98,12 @@ namespace ExchangeBotApp.Dialogs {
 					//TODO: 会議室配布グループのアドレスなのか、会議室自体のアドレスなのかを判定する処理
 					//TODO: 会議室配布グループのアドレスの場合、所属する会議室の一覧を表示する処理
 
+					var rooms = await manager.GetRoomsAsync();
+					var name = rooms.FirstOrDefault(r => r.Address == msg)?.Name;
+					var address = new Ews.EmailAddress(name, msg);
+
 					// 会議室の空き時間表示
-					await context.PostConferenceScheduleAsync(_manager, msg);
+					await context.PostConferenceScheduleAsync(manager, address);
 					return;
 				}
 
