@@ -1,8 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using BotLibrary.Extensions;
 using ExchangeBotApp.Dialogs;
-using ExchangeBotApp.Extensions;
 using Microsoft.Bot.Connector;
 
 namespace ExchangeBotApp {

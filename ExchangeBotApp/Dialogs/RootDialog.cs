@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BotLibrary.Extensions;
 using ExchangeBotApp.Extensions;
 using ExchangeManager;
 using ExchangeManager.Extensions;
