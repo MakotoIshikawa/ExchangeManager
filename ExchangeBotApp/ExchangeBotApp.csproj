@@ -48,6 +48,9 @@
       <HintPath>..\packages\Autofac.4.6.0\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="BotLibrary">
+      <HintPath>..\lib\BotLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Chronic, Version=0.3.2.0, Culture=neutral, PublicKeyToken=3bd1f1ef638b0d3c, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\Chronic.Signed.0.3.2\lib\net40\Chronic.dll</HintPath>
     </Reference>
@@ -166,10 +169,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BotLibrary\BotLibrary.csproj">
-      <Project>{6d14cbfd-c76b-4e64-b752-17ea50eccc0b}</Project>
-      <Name>BotLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ExchangeManager\ExchangeManager.csproj">
       <Project>{db751cfb-2b19-47b7-8f0c-f3c90da641be}</Project>
       <Name>ExchangeManager</Name>

@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BotLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:BotLibrary.Extensions.ActivityExtension">
+            <summary>
+            Activity を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:BotLibrary.Extensions.ActivityExtension.SendAsync``1(Microsoft.Bot.Connector.Activity)">
+            <summary>
+            非同期でダイアログの処理を開始します。
+            </summary>
+            <typeparam name="TDialog">Dialog</typeparam>
+            <param name="this">Activity</param>
+        </member>
+        <member name="M:BotLibrary.Extensions.ActivityExtension.PostAsync``1(Microsoft.Bot.Connector.Activity,System.Action{Microsoft.Bot.Connector.Activity})">
+            <summary>
+            非同期で POST します。
+            </summary>
+            <typeparam name="TDialog">ダイアログの型</typeparam>
+            <param name="activity">Activity</param>
+            <param name="handleSystemMessage">システムメッセージを処理するメソッド</param>
+            <returns>HTTP 応答メッセージを返します。</returns>
+        </member>
+        <member name="T:BotLibrary.Extensions.AttachmentExtension">
+            <summary>
+            Attachment を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:BotLibrary.Extensions.AttachmentExtension.ToButtons(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            文字列のコレクションを Button 群に変換します。
+            </summary>
+            <param name="this">DialogContext</param>
+            <param name="text">メッセージ</param>
+            <returns>Button 群を返します。</returns>
+        </member>
+        <member name="M:BotLibrary.Extensions.AttachmentExtension.ToButtons(System.Collections.Generic.Dictionary{System.String,System.String},System.String)">
+            <summary>
+            連想配列を Button 群に変換します。
+            </summary>
+            <param name="this">DialogContext</param>
+            <param name="text">メッセージ</param>
+            <returns>Button 群を返します。</returns>
+        </member>
+        <member name="M:BotLibrary.Extensions.AttachmentExtension.ToImage(System.Uri,System.String,System.String)">
+            <summary>
+            イメージの付属品に変換します。
+            </summary>
+            <param name="this">Uri</param>
+            <param name="text">テキスト文字列</param>
+            <param name="title">タイトル</param>
+            <returns>イメージの付属品を返します。</returns>
+        </member>
+        <member name="T:BotLibrary.Extensions.DialogContextExtension">
+            <summary>
+            DialogContext を拡張するメソッドを提供します。
+            </summary>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.GetUserData``1(Microsoft.Bot.Builder.Dialogs.IDialogContext,System.String)">
+            <summary>
+            ユーザーデータから値を取得します。
+            </summary>
+            <typeparam name="T">値の型</typeparam>
+            <param name="this">DialogContext</param>
+            <param name="key">キー</param>
+            <returns>値を返します。</returns>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.SetUserData``1(Microsoft.Bot.Builder.Dialogs.IDialogContext,System.String,``0)">
+            <summary>
+            ユーザーデータに値を設定します。
+            </summary>
+            <typeparam name="T">値の型</typeparam>
+            <param name="this">DialogContext</param>
+            <param name="key">キー</param>
+            <param name="value">値</param>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.PostDefaultResponseMessageAsync(Microsoft.Bot.Builder.Dialogs.IDialogContext,Microsoft.Bot.Builder.Luis.Models.LuisResult,System.Collections.Generic.Dictionary{System.String,System.String},System.Exception)">
+            <summary>
+            デフォルト時の応答メッセージを POST します。
+            </summary>
+            <param name="this">IDialogContext</param>
+            <param name="result">LUIS の結果</param>
+            <param name="dictionary">ボタンの元となる連想配列</param>
+            <param name="ex">例外</param>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.GetDefaultResponseMessage(Microsoft.Bot.Builder.Luis.Models.LuisResult,System.Exception)">
+            <summary>
+            デフォルト時の応答メッセージを取得します。
+            </summary>
+            <param name="result">LUIS の結果</param>
+            <param name="ex">例外</param>
+            <returns>応答メッセージを返します。</returns>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.PostButtonsAsync(Microsoft.Bot.Builder.Dialogs.IDialogContext,System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Button 群を POST します。
+            </summary>
+            <param name="this">DialogContext</param>
+            <param name="text">メッセージ</param>
+            <param name="items">ボタン群の元となるコレクション</param>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.PostButtonsAsync(Microsoft.Bot.Builder.Dialogs.IDialogContext,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Button 群を POST します。
+            </summary>
+            <param name="this">DialogContext</param>
+            <param name="text">メッセージ</param>
+            <param name="dictionary">ボタン群の元となる連想配列</param>
+        </member>
+        <member name="M:BotLibrary.Extensions.DialogContextExtension.PostMessageAsync(Microsoft.Bot.Builder.Dialogs.IDialogContext,System.String,Microsoft.Bot.Connector.Attachment[])">
+            <summary>
+            回答を非同期で POST します。
+            </summary>
+            <param name="context">IDialogContext</param>
+            <param name="text">テキスト文字列</param>
+            <param name="attachments">付属品の配列</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
