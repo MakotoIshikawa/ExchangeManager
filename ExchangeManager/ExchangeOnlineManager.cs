@@ -24,7 +24,7 @@ namespace ExchangeManager {
 			this.Password = password;
 			this.Service = this.CreateService();
 
-			var delay = 30000;
+			var delay = 60000;
 			var ret = Task.Run(() => {
 				this.Service.AutodiscoverUrl(username, url => {
 					// 検証コールバックのデフォルトは、URLを拒否することです。
